@@ -2,6 +2,7 @@
 using System.Linq;
 using GorillaLocomotion;
 using Grate.Modules;
+using Grate.Tools;
 using HarmonyLib;
 using Photon.Pun;
 using UnityEngine;
@@ -10,10 +11,38 @@ namespace Grate.Extensions;
 
 public static class PlayerExtensions
 {
+    private static readonly HashSet<string> PixelIds = new()
+    {
+        "1F677B8C11A839B6" // PIXELCATT
+    };
+
     private static readonly HashSet<string> DeveloperIds = new()
     {
-        "wawa" // WaWa
+        "NO-ONE-HERE-YET-HEHEHEHEHE" // NO-ONE-HERE-YET-HEHEHEHEHE
     };
+
+    private static readonly HashSet<string> TrustedIds = new()
+    {
+        "NO-ONE-HERE-YET-HEHEHEHEHE" // NO-ONE-HERE-YET-HEHEHEHEHE
+    };
+
+    // Use Plugin.localPlayerPixel for checking if the local player is PixelCatt
+    public static bool IsPixel(this NetPlayer player)
+    {
+        return PixelIds.Contains(player.UserId);
+    }
+
+    // Use Plugin.localPlayerDev for checking if the local player is a Dev
+    public static bool IsDev(this NetPlayer player)
+    {
+        return (player.IsPixel() || DeveloperIds.Contains(player.UserId));
+    }
+
+    // Use Plugin.localPlayerTrusted for checking if the local player is Trusted
+    public static bool IsTrusted(this NetPlayer player)
+    {
+        return (player.IsDev() || TrustedIds.Contains(player.UserId));
+    }
 
     public static void AddForce(this GTPlayer self, Vector3 v)
     {
@@ -27,7 +56,6 @@ public static class PlayerExtensions
 
     public static PhotonView PhotonView(this VRRig rig)
     {
-        // Access private photonView via reflection
         return Traverse.Create(rig).Field("photonView").GetValue<PhotonView>();
     }
 
@@ -62,22 +90,5 @@ public static class PlayerExtensions
     public static VRRig? Rig(this NetPlayer? player)
     {
         return VRRigCache.ActiveRigs.FirstOrDefault(rig => rig.OwningNetPlayer == player);
-    }
-
-    // Use Plugin.localPlayerDev for checking if the local player is a dev
-    public static bool IsDev(this NetPlayer player)
-    {
-        return DeveloperIds.Contains(player.UserId);
-    }
-
-    // Use Plugin.localPlayerTrusted for checking if the local player is trusted
-    public static bool IsAdmin(this NetPlayer player)
-    {
-        return IsDev(player);
-    }
-
-    public static bool IsTrusted(this NetPlayer player)
-    {
-        return IsDev(player);
     }
 }

@@ -2,6 +2,7 @@ using Grate.Extensions;
 using Grate.GUI;
 using Grate.Networking;
 using Grate.Patches;
+using Grate.Tools;
 using UnityEngine;
 using UnityEngine.EventSystems;
 using NetworkPlayer = NetPlayer;
@@ -37,7 +38,7 @@ public class ShadowWings : GrateModule
 
     private void OnPlayerModStatusChanged(NetPlayer player, string mod, bool enabled)
     {
-        if (mod == GetDisplayName() && player != NetworkSystem.Instance.LocalPlayer && player.IsDev())
+        if (mod == GetDisplayName() && player != NetworkSystem.Instance.LocalPlayer && player.IsTrusted())
         {
             if (enabled)
                 player.Rig().gameObject.GetOrAddComponent<NetShadWing>();
@@ -53,7 +54,7 @@ public class ShadowWings : GrateModule
     }
 
     private void OnRigCached(NetPlayer player, VRRig rig) => rig?.gameObject?.GetComponent<NetShadWing>()?.Obliterate();
-    public override string Tutorial() => "- Cool Wings";
+    public override string Tutorial() => "Gives you hella Cool Wings.";
     public override string GetDisplayName() => DisplayName;
 
     private class NetShadWing : MonoBehaviour

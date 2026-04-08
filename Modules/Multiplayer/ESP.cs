@@ -2,6 +2,7 @@
 using Grate.Extensions;
 using Grate.Networking;
 using Grate.Patches;
+using Grate.Tools;
 using UnityEngine;
 
 namespace Grate.Modules.Multiplayer;

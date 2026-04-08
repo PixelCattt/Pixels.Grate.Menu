@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections;
+using System.Diagnostics;
 using System.Collections.Generic;
 using System.Linq;
 using BepInEx.Configuration;
@@ -31,8 +32,6 @@ public class MenuController : GrateGrabbable
     private static ConfigEntry<string>? _summonInputHand;
     private static ConfigEntry<string>? _theme;
     public static Material[]? ShinyRocks;
-
-    private bool AdminMods = false;
 
     public static bool Debugger = true;
 
@@ -94,7 +93,6 @@ public class MenuController : GrateGrabbable
                 gameObject.AddComponent<SlipperyHands>(),
                 gameObject.AddComponent<DisableWind>(),
                 gameObject.AddComponent<UpsideDown>(),
-                gameObject.AddComponent<Freeze>(),
 
                 //// Teleportation
                 gameObject.AddComponent<Checkpoint>(),
@@ -112,21 +110,44 @@ public class MenuController : GrateGrabbable
                 gameObject.AddComponent<RatSword>()
             };
 
-            modules.AddRange(tooAddmodules);
-
-            var devModules = new List<GrateModule>
+            // TRUSTED
+            var trustedModules = new List<GrateModule>
             {
-                gameObject.AddComponent<Cheese>(),
-                gameObject.AddComponent<SombreroHat>(),
                 gameObject.AddComponent<ShadowWings>(),
-                gameObject.AddComponent<TrustedPhone>(),
-                gameObject.AddComponent<DeveloperPhone>()
+                gameObject.AddComponent<GiantHat>(),
+                gameObject.AddComponent<TrustedPhone>()
             };
 
-            if (false)
+            if (Plugin.LocalPlayerTrusted)
             {
-                modules.AddRange(devModules);
+                tooAddmodules.AddRange(trustedModules);
             }
+
+            // DEV
+            var devModules = new List<GrateModule>
+            {
+                gameObject.AddComponent<DeveloperPhone>(),
+                gameObject.AddComponent<WaterGun>()
+            };
+
+            if (Plugin.LocalPlayerDev)
+            {
+                tooAddmodules.AddRange(devModules);
+            }
+
+            // PIXEL
+            var pixelModules = new List<GrateModule>
+            {
+                gameObject.AddComponent<Cheese>()
+            };
+
+            if (Plugin.LocalPlayerPixel)
+            {
+                tooAddmodules.AddRange(pixelModules);
+            }
+
+
+            modules.AddRange(tooAddmodules);
 
             ReloadConfiguration();
         }
@@ -316,9 +337,15 @@ public class MenuController : GrateGrabbable
     public void Summon()
     {
         if (!Built)
+        {
             BuildMenu();
+            StartCoroutine(VerCheck());
+        }
         else
+        {
             ResetPosition();
+            StartCoroutine(VerCheck());
+        }
     }
 
     private void ResetPosition()
@@ -333,32 +360,49 @@ public class MenuController : GrateGrabbable
         docked = true;
     }
 
-    // ReSharper disable Unity.PerformanceAnalysis
     private IEnumerator VerCheck()
     {
-        using (var request = UnityWebRequest.Get("https://raw.githubusercontent.com/The-Graze/Grate/master/ver.txt"))
+        using (var request = UnityWebRequest.Get("https://api.github.com/repos/PixelCattt/Pixels.Grate.Menu/releases/latest"))
         {
+            request.SetRequestHeader("Accept", "application/json");
+
             yield return request.SendWebRequest();
-            if (request.result != UnityWebRequest.Result.Success) yield break;
 
-            var fileContents = request.downloadHandler.text;
+            if (request.result != UnityWebRequest.Result.Success)
+                yield break;
 
-            var checkedV = new Version(fileContents);
+            var json = request.downloadHandler.text;
+
+            const string key = "\"tag_name\":\"";
+            var start = json.IndexOf(key, StringComparison.Ordinal);
+            if (start == -1) yield break;
+
+            start += key.Length;
+
+            var end = json.IndexOf("\"", start, StringComparison.Ordinal);
+            if (end == -1) yield break;
+
+            var tag = json.Substring(start, end - start);
+
+            if (tag.StartsWith("v"))
+                tag = tag.Substring(1);
+
+            var checkedV = new Version(tag);
             var localv = new Version(PluginInfo.Version);
+
             var text = gameObject.transform.Find("Version Canvas").GetComponentInChildren<Text>();
+
             if (checkedV > localv)
             {
-                text.horizontalOverflow =
-                    HorizontalWrapMode.Overflow;
-                text.verticalOverflow =
-                    VerticalWrapMode.Overflow;
-                text.text =
-                    "!!Update Needed!! \n GoTo: \n https://graze.cc/grate";
+                text.horizontalOverflow = HorizontalWrapMode.Overflow;
+                text.verticalOverflow = VerticalWrapMode.Overflow;
+                text.text = "!!! Update Needed !!!";
+
+                Process.Start("https://github.com/PixelCattt/Pixels.Grate.Menu/releases");
             }
             else
             {
-                text.text =
-                    $"{PluginInfo.Name} {PluginInfo.Version}";
+                text.text = $"{PluginInfo.Name} {PluginInfo.Version}";
             }
         }
     }
@@ -372,7 +416,6 @@ public class MenuController : GrateGrabbable
             helpText.transform.parent.localPosition = new Vector3(0, -0.0731f, -0.1f);
             helpText.transform.parent.localRotation = Quaternion.Euler(0, 180f, 0);
             helpText.text = "Enable a module to see its tutorial.";
-            StartCoroutine(VerCheck());
             var collider = gameObject.GetOrAddComponent<BoxCollider>();
             collider.isTrigger = true;
             rigidbody = gameObject.GetComponent<Rigidbody>();

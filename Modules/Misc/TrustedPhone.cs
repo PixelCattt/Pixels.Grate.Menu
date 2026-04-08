@@ -38,12 +38,25 @@ public class TrustedPhone : GrateModule
         base.OnEnable();
         try
         {
-            _phone?.SetActive(true);
+            GestureTracker.Instance.rightGrip.OnPressed += OnGripPressed;
+            GestureTracker.Instance.rightGrip.OnReleased += OnGripReleased;
+
+            _phone?.SetActive(false);
         }
         catch (Exception e)
         {
             Logging.Exception(e);
         }
+    }
+
+    private void OnGripPressed(InputTracker tracker)
+    {
+        _phone?.SetActive(true);
+    }
+
+    private void OnGripReleased(InputTracker tracker)
+    {
+        _phone?.SetActive(false);
     }
 
     private void OnPlayerModStatusChanged(NetworkPlayer player, string mod, bool modEnabled)
@@ -58,6 +71,12 @@ public class TrustedPhone : GrateModule
     protected override void Cleanup()
     {
         _phone?.SetActive(false);
+
+        if (GestureTracker.Instance != null)
+        {
+            GestureTracker.Instance.rightGrip.OnPressed -= OnGripPressed;
+            GestureTracker.Instance.rightGrip.OnReleased -= OnGripReleased;
+        }
     }
 
     private static void OnRigCached(NetworkPlayer player, VRRig rig)
@@ -72,7 +91,7 @@ public class TrustedPhone : GrateModule
 
     public override string Tutorial()
     {
-        return "Trusted/Respected/Supporter Monke";
+        return "[RIGHT GRIP] to equip your Phone, Trusted Monke.";
     }
 
     private class NetPhone : MonoBehaviour
@@ -89,23 +108,49 @@ public class TrustedPhone : GrateModule
 
             if (phone == null)
                 return;
+
             phone.transform.localPosition = new Vector3(0.0992f, 0.06f, 0.02f);
             phone.transform.localRotation = Quaternion.Euler(270, 163.12f, 0);
-            Vector3 localScale = phone.transform.localScale/20;
+            Vector3 localScale = phone.transform.localScale / 20;
             localScale.y = 54f;
             phone.transform.localScale = localScale;
 
-            phone.SetActive(true);
+            phone.SetActive(false);
+
+            networkedPlayer.OnGripPressed += OnGripPressed;
+            networkedPlayer.OnGripReleased += OnGripReleased;
         }
 
         private void OnDisable()
         {
             phone?.Obliterate();
+
+            if (networkedPlayer != null)
+            {
+                networkedPlayer.OnGripPressed -= OnGripPressed;
+                networkedPlayer.OnGripReleased -= OnGripReleased;
+            }
         }
 
         private void OnDestroy()
         {
             phone?.Obliterate();
+
+            if (networkedPlayer != null)
+            {
+                networkedPlayer.OnGripPressed -= OnGripPressed;
+                networkedPlayer.OnGripReleased -= OnGripReleased;
+            }
+        }
+
+        private void OnGripPressed(NetworkedPlayer player, bool isLeft)
+        {
+            if (!isLeft) phone?.SetActive(true);
+        }
+
+        private void OnGripReleased(NetworkedPlayer player, bool isLeft)
+        {
+            if (!isLeft) phone?.SetActive(false);
         }
     }
 }

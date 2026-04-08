@@ -12,24 +12,24 @@ namespace Grate.Modules.Misc;
 
 public class DeveloperPhone : GrateModule
 {
-    public static string DisplayName = "Dev Phone";
-    private static GameObject Phone;
+    private static readonly string DisplayName = "Dev Phone";
+    private static GameObject? _phone;
 
     protected override void Start()
     {
         base.Start();
-        if (Phone == null)
+        if (_phone == null)
         {
-            Phone = Instantiate(Plugin.AssetBundle.LoadAsset<GameObject>("DEVPHONE"));
-            Phone.transform.SetParent(GestureTracker.Instance.rightHand.transform, true);
-            Phone.transform.localPosition = new Vector3(-1.5f, 0.2f, 0.1f);
-            Phone.transform.localRotation = Quaternion.Euler(2, 10, 0);
-            Phone.transform.localScale /= 2;
+            _phone = Instantiate(Plugin.AssetBundle.LoadAsset<GameObject>("DEVPHONE"));
+            _phone.transform.SetParent(GestureTracker.Instance.rightHand.transform, true);
+            _phone.transform.localPosition = new Vector3(-1.5f, 0.2f, 0.1f);
+            _phone.transform.localRotation = Quaternion.Euler(2, 10, 0);
+            _phone.transform.localScale /= 2;
         }
 
         NetworkPropertyHandler.Instance.OnPlayerModStatusChanged += OnPlayerModStatusChanged;
         VRRigCachePatches.OnRigCached += OnRigCached;
-        Phone.SetActive(false);
+        _phone?.SetActive(false);
     }
 
     protected override void OnEnable()
@@ -38,7 +38,10 @@ public class DeveloperPhone : GrateModule
         base.OnEnable();
         try
         {
-            Phone.SetActive(true);
+            GestureTracker.Instance.rightGrip.OnPressed += OnGripPressed;
+            GestureTracker.Instance.rightGrip.OnReleased += OnGripReleased;
+
+            _phone?.SetActive(false);
         }
         catch (Exception e)
         {
@@ -46,25 +49,39 @@ public class DeveloperPhone : GrateModule
         }
     }
 
-    private void OnPlayerModStatusChanged(NetworkPlayer player, string mod, bool enabled)
+    private void OnGripPressed(InputTracker tracker)
     {
-        if (mod == DisplayName && player.IsDev())
-        {
-            if (enabled)
-                player.Rig().gameObject.GetOrAddComponent<NetDevPhone>();
-            else
-                Destroy(player.Rig().gameObject.GetComponent<NetDevPhone>());
-        }
+        _phone?.SetActive(true);
+    }
+
+    private void OnGripReleased(InputTracker tracker)
+    {
+        _phone?.SetActive(false);
+    }
+
+    private void OnPlayerModStatusChanged(NetworkPlayer player, string mod, bool modEnabled)
+    {
+        if (mod != DisplayName || !player.IsDev()) return;
+        if (modEnabled)
+            player.Rig()?.gameObject.GetOrAddComponent<NetPhone>();
+        else
+            Destroy(player.Rig()?.gameObject.GetComponent<NetPhone>());
     }
 
     protected override void Cleanup()
     {
-        Phone?.SetActive(false);
+        _phone?.SetActive(false);
+
+        if (GestureTracker.Instance != null)
+        {
+            GestureTracker.Instance.rightGrip.OnPressed -= OnGripPressed;
+            GestureTracker.Instance.rightGrip.OnReleased -= OnGripReleased;
+        }
     }
 
-    private void OnRigCached(NetPlayer player, VRRig rig)
+    private static void OnRigCached(NetworkPlayer player, VRRig rig)
     {
-        rig?.gameObject?.GetComponent<NetDevPhone>()?.Obliterate();
+        rig?.gameObject?.GetComponent<NetPhone>()?.Obliterate();
     }
 
     public override string GetDisplayName()
@@ -74,39 +91,66 @@ public class DeveloperPhone : GrateModule
 
     public override string Tutorial()
     {
-        return "Only for Dev-Moke";
+        return "[RIGHT GRIP] to equip your Phone, Dev Moke.";
     }
 
-    private class NetDevPhone : MonoBehaviour
+    private class NetPhone : MonoBehaviour
     {
-        private NetworkedPlayer networkedPlayer;
-        private GameObject phone;
+        private NetworkedPlayer? networkedPlayer;
+        private GameObject? phone;
 
         private void OnEnable()
         {
             networkedPlayer = gameObject.GetComponent<NetworkedPlayer>();
             var rightHand = networkedPlayer.rig.rightHandTransform;
 
-            phone = Instantiate(Phone);
+            phone = Instantiate(_phone, rightHand, false);
 
-            phone.transform.SetParent(rightHand);
+            if (phone == null)
+                return;
+
             phone.transform.localPosition = new Vector3(0.0992f, 0.06f, 0.02f);
             phone.transform.localRotation = Quaternion.Euler(270, 163.12f, 0);
-            Vector3 localScale = phone.transform.localScale/20;
+            Vector3 localScale = phone.transform.localScale / 20;
             localScale.y = 54f;
             phone.transform.localScale = localScale;
 
-            phone.SetActive(true);
+            phone.SetActive(false);
+
+            networkedPlayer.OnGripPressed += OnGripPressed;
+            networkedPlayer.OnGripReleased += OnGripReleased;
         }
 
         private void OnDisable()
         {
-            phone.Obliterate();
+            phone?.Obliterate();
+
+            if (networkedPlayer != null)
+            {
+                networkedPlayer.OnGripPressed -= OnGripPressed;
+                networkedPlayer.OnGripReleased -= OnGripReleased;
+            }
         }
 
         private void OnDestroy()
         {
-            phone.Obliterate();
+            phone?.Obliterate();
+
+            if (networkedPlayer != null)
+            {
+                networkedPlayer.OnGripPressed -= OnGripPressed;
+                networkedPlayer.OnGripReleased -= OnGripReleased;
+            }
+        }
+
+        private void OnGripPressed(NetworkedPlayer player, bool isLeft)
+        {
+            if (!isLeft) phone?.SetActive(true);
+        }
+
+        private void OnGripReleased(NetworkedPlayer player, bool isLeft)
+        {
+            if (!isLeft) phone?.SetActive(false);
         }
     }
 }

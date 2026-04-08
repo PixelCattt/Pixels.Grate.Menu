@@ -33,7 +33,8 @@ public class Plugin : BaseUnityPlugin
     public static ConfigFile? ConfigFile;
     public static bool LocalPlayerTrusted;
     public static bool LocalPlayerDev;
-    public static bool LocalPlayerAdmin;
+
+    public static bool LocalPlayerPixel;
 
     public static Text? DebugText;
     private GestureTracker? gt;
@@ -65,10 +66,29 @@ public class Plugin : BaseUnityPlugin
     {
         gt = gameObject.GetOrAddComponent<GestureTracker>();
         nph = gameObject.GetOrAddComponent<NetworkPropertyHandler>();
+
         MenuController = Instantiate(monkeMenuPrefab)?.AddComponent<MenuController>();
-        LocalPlayerDev = NetworkSystem.Instance.LocalPlayer.IsDev();
-        LocalPlayerAdmin = NetworkSystem.Instance.LocalPlayer.IsAdmin();
-        LocalPlayerTrusted = NetworkSystem.Instance.LocalPlayer.IsTrusted();
+    }
+
+    private IEnumerator WaitForIdAndUpdatePermissions()
+    {
+        while (NetworkSystem.Instance?.LocalPlayer == null || string.IsNullOrWhiteSpace(NetworkSystem.Instance.LocalPlayer.UserId) || NetworkSystem.Instance.LocalPlayer.UserId.Length != 16)
+        {
+            yield return null;
+        }
+
+        UpdatePermissions();
+    }
+
+    private void UpdatePermissions()
+    {
+        var localPlayer = NetworkSystem.Instance.LocalPlayer;
+
+        LocalPlayerTrusted = localPlayer.IsTrusted();
+        LocalPlayerDev = localPlayer.IsDev();
+        LocalPlayerPixel = localPlayer.IsPixel();
+
+        Setup();
     }
 
     public void Cleanup()
@@ -142,7 +162,7 @@ public class Plugin : BaseUnityPlugin
             Logging.Info("Platform: ", platform);
             IsSteam = platform.PlatformTag.Contains("Steam");
 
-            Setup();
+            StartCoroutine(WaitForIdAndUpdatePermissions());
 
             if (DebugMode)
                 CreateDebugGUI();
