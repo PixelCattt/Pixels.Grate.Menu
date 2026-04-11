@@ -1,10 +1,10 @@
 ﻿using BepInEx.Configuration;
-using Grate.GUI;
+using Bark.GUI;
 using UnityEngine;
 
-namespace Grate.Modules.Physics;
+namespace Bark.Modules.Physics;
 
-public class LowGravity : GrateModule
+public class LowGravity : BarkModule
 {
     public static readonly string DisplayName = "Gravity";
     public static LowGravity Instance;
@@ -61,6 +61,7 @@ public class LowGravity : GrateModule
 
     public override string Tutorial()
     {
-        return "Effect: Changes the strength of gravity. \n\nYou can modify the strength in the settings menu.";
+        return "Changes the strength of Gravity.\n" +
+               "You can modify the Strength in the Settings Menu.";
     }
 }

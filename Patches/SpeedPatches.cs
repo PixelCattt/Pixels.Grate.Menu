@@ -1,11 +1,11 @@
 ﻿using System;
 using GorillaLocomotion;
-using Grate.Modules;
-using Grate.Tools;
+using Bark.Modules;
+using Bark.Tools;
 using HarmonyLib;
 using UnityEngine;
 
-namespace Grate.Patches;
+namespace Bark.Patches;
 
 [HarmonyPatch(typeof(GorillaTagManager))]
 [HarmonyPatch(nameof(GorillaTagManager.LocalPlayerSpeed), MethodType.Normal)]

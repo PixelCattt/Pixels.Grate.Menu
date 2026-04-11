@@ -1,7 +1,7 @@
 ﻿using System;
 using UnityEngine;
 
-namespace Grate.Tools;
+namespace Bark.Tools;
 
 public class DebugPoly : MonoBehaviour
 {

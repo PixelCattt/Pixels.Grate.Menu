@@ -1,9 +1,9 @@
-﻿using Grate.GUI;
-using Grate.Patches;
+﻿using Bark.GUI;
+using Bark.Patches;
 
-namespace Grate.Modules.Physics;
+namespace Bark.Modules.Physics;
 
-public class NoSlip : GrateModule
+public class NoSlip : BarkModule
 {
     public static readonly string DisplayName = "No Slip";
     public static NoSlip Instance;
@@ -33,6 +33,6 @@ public class NoSlip : GrateModule
 
     public override string Tutorial()
     {
-        return "Effect: You no longer slide on slippery surfaces.";
+        return "You no longer Slide on slippery Surfaces.";
     }
 }

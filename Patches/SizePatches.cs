@@ -1,11 +1,11 @@
 ﻿using System;
-using Grate.Extensions;
-using Grate.Modules.Physics;
-using Grate.Tools;
+using Bark.Extensions;
+using Bark.Modules.Physics;
+using Bark.Tools;
 using HarmonyLib;
 using UnityEngine;
 
-namespace Grate.Patches;
+namespace Bark.Patches;
 
 [HarmonyPatch(typeof(SizeManager))]
 [HarmonyPatch(nameof(SizeManager.ControllingChanger), MethodType.Normal)]

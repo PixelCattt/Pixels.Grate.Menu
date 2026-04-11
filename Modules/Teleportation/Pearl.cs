@@ -1,17 +1,17 @@
 ﻿using System;
 using BepInEx.Configuration;
 using GorillaLocomotion;
-using Grate.Extensions;
-using Grate.Gestures;
-using Grate.GUI;
-using Grate.Interaction;
-using Grate.Patches;
-using Grate.Tools;
+using Bark.Extensions;
+using Bark.Gestures;
+using Bark.GUI;
+using Bark.Interaction;
+using Bark.Patches;
+using Bark.Tools;
 using UnityEngine;
 
-namespace Grate.Modules.Teleportation;
+namespace Bark.Modules.Teleportation;
 
-public class Pearl : GrateModule
+public class Pearl : BarkModule
 {
     public static readonly string DisplayName = "Pearl";
     public static Pearl Instance;
@@ -62,7 +62,7 @@ public class Pearl : GrateModule
     {
         try
         {
-            pearlObj.name = "Grate Pearl";
+            pearlObj.name = "Bark Pearl";
             var pearl = pearlObj.AddComponent<ThrowablePearl>();
             return pearl;
         }
@@ -108,11 +108,12 @@ public class Pearl : GrateModule
 
     public override string Tutorial()
     {
-        return "Hold either [Grip] to summon a pearl. Throw it and you will to teleport where it lands.";
+        return "[GRIP] to grab a Pearl.\n" +
+               "Throw it to Teleport where it Lands.";
     }
 }
 
-public class ThrowablePearl : GrateGrabbable
+public class ThrowablePearl : BarkGrabbable
 {
     private AudioSource audioSource;
     private GestureTracker gt;
@@ -137,7 +138,7 @@ public class ThrowablePearl : GrateGrabbable
             monkeMat = GetComponentInChildren<SkinnedMeshRenderer>().material;
             trailMat = GetComponentInChildren<ParticleSystemRenderer>().material;
             trail = GetComponentInChildren<ParticleSystem>();
-            gameObject.layer = GrateInteractor.InteractionLayer;
+            gameObject.layer = BarkInteractor.InteractionLayer;
             rigidbody = gameObject.GetOrAddComponent<Rigidbody>();
             rigidbody.useGravity = true;
             gt = GestureTracker.Instance;
@@ -208,7 +209,7 @@ public class ThrowablePearl : GrateGrabbable
         }
     }
 
-    public override void OnDeselect(GrateInteractor interactor)
+    public override void OnDeselect(BarkInteractor interactor)
     {
         base.OnDeselect(interactor);
         thrown = true;

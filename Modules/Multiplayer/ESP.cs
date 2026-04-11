@@ -1,13 +1,13 @@
 ﻿using System.Collections.Generic;
-using Grate.Extensions;
-using Grate.Networking;
-using Grate.Patches;
-using Grate.Tools;
+using Bark.Extensions;
+using Bark.Networking;
+using Bark.Patches;
+using Bark.Tools;
 using UnityEngine;
 
-namespace Grate.Modules.Multiplayer;
+namespace Bark.Modules.Multiplayer;
 
-internal class ESP : GrateModule
+internal class ESP : BarkModule
 {
     private readonly Shader esp = Shader.Find("GUI/Text Shader");
     private readonly List<VRRig> Espd = new();

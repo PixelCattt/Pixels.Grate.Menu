@@ -1,13 +1,13 @@
 ﻿using BepInEx.Configuration;
-using Grate.Extensions;
-using Grate.Gestures;
-using Grate.GUI;
+using Bark.Extensions;
+using Bark.Gestures;
+using Bark.GUI;
 using UnityEngine;
 using Player = GorillaLocomotion.GTPlayer;
 
-namespace Grate.Modules.Movement;
+namespace Bark.Modules.Movement;
 
-public class Fly : GrateModule
+public class Fly : BarkModule
 {
     public static readonly string DisplayName = "Fly";
 
@@ -61,7 +61,8 @@ public class Fly : GrateModule
 
     public override string Tutorial()
     {
-        return "Use left stick to fly horizontally, and right stick to fly vertically.";
+        return "[LEFT STICK] to Fly Horizontally.\n" +
+               "[RIGHT STICK] to Fly Vertically.";
     }
 
     protected override void ReloadConfiguration()

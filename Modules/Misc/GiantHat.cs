@@ -1,14 +1,14 @@
 ﻿using GorillaLocomotion;
-using Grate.Extensions;
-using Grate.GUI;
-using Grate.Networking;
-using Grate.Patches;
-using Grate.Tools;
+using Bark.Extensions;
+using Bark.GUI;
+using Bark.Networking;
+using Bark.Patches;
+using Bark.Tools;
 using UnityEngine;
 
-namespace Grate.Modules.Misc
+namespace Bark.Modules.Misc
 {
-    public class GiantHat : GrateModule
+    public class GiantHat : BarkModule
     {
         private static GameObject Hat;
         
@@ -56,7 +56,7 @@ namespace Grate.Modules.Misc
 
         private void OnRigCached(NetPlayer player, VRRig rig) => rig?.gameObject?.GetComponent<GiantHat>()?.Obliterate();
         public override string GetDisplayName() => "Giant Hat";
-        public override string Tutorial() => "Gives you a hella Cool Hat.";
+        public override string Tutorial() => "Gives you a Cool Big Hat.";
 
         private class NetGiantHat : MonoBehaviour
         {

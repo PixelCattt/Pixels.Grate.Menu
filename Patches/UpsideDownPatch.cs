@@ -3,7 +3,7 @@ using GorillaLocomotion;
 using HarmonyLib;
 using UnityEngine;
 
-namespace Grate.Patches;
+namespace Bark.Patches;
 
 [HarmonyPatch(typeof(VRRig), nameof(VRRig.PostTick))]
 public class UpsideDownPatch

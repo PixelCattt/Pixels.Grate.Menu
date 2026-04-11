@@ -8,19 +8,19 @@ using BepInEx.Configuration;
 using GorillaLocomotion;
 using GorillaLocomotion.Swimming;
 using GorillaNetworking;
-using Grate.Extensions;
-using Grate.Gestures;
-using Grate.GUI;
-using Grate.Modules;
-using Grate.Modules.Multiplayer;
-using Grate.Networking;
-using Grate.Tools;
+using Bark.Extensions;
+using Bark.Gestures;
+using Bark.GUI;
+using Bark.Modules;
+using Bark.Modules.Multiplayer;
+using Bark.Networking;
+using Bark.Tools;
 using HarmonyLib;
 using Photon.Pun.UtilityScripts;
 using UnityEngine;
 using UnityEngine.UI;
 
-namespace Grate;
+namespace Bark;
 
 [BepInPlugin(PluginInfo.Guid, PluginInfo.Name, PluginInfo.Version)]
 public class Plugin : BaseUnityPlugin
@@ -48,17 +48,16 @@ public class Plugin : BaseUnityPlugin
         Logging.Init();
         Instance = this;
         HarmonyPatches.ApplyHarmonyPatches();
-        ConfigFile = new ConfigFile(Path.Combine(Paths.ConfigPath, "Grate.cfg"), true);
-        var list = GrateModule.GetGrateModuleTypes();
+        ConfigFile = new ConfigFile(Path.Combine(Paths.ConfigPath, "Bark.cfg"), true);
+        var list = BarkModule.GetBarkModuleTypes();
         foreach (var bindConfigs in list.Select(moduleType => moduleType.GetMethod("BindConfigEntries")).Select(info => info).OfType<MethodInfo>())
         {
             bindConfigs.Invoke(null, null);
         }
 
         GorillaTagger.OnPlayerSpawned(OnGameInitialized);
-        AssetBundle = AssetUtils.LoadAssetBundle("Grate.Resources.gratebundle");
+        AssetBundle = AssetUtils.LoadAssetBundle("Pixel-Bark.Resources.barkbundle");
         monkeMenuPrefab = AssetBundle?.LoadAsset<GameObject>("Bark Menu");
-        monkeMenuPrefab!.name = "Grate Menu";
         MenuController.BindConfigEntries();
     }
 
@@ -114,7 +113,7 @@ public class Plugin : BaseUnityPlugin
                 var canvas = GTPlayer.Instance.headCollider.transform.GetComponentInChildren<Canvas>();
                 if (!canvas)
                 {
-                    canvas = new GameObject("~~~Grate Debug Canvas").AddComponent<Canvas>();
+                    canvas = new GameObject("~~~Bark Debug Canvas").AddComponent<Canvas>();
                     canvas.renderMode = RenderMode.WorldSpace;
                     canvas.transform.SetParent(GTPlayer.Instance.headCollider.transform);
                     canvas.transform.localPosition = Vector3.forward * .35f;
@@ -129,7 +128,6 @@ public class Plugin : BaseUnityPlugin
                     text.transform.localRotation = Quaternion.identity;
                     text.transform.localScale = Vector3.one;
                     text.color = Color.green;
-                    //text.text = "Hello World";
                     text.fontSize = 24;
                     text.font = Font.CreateDynamicFontFromOSFont("Arial", 24);
                     text.alignment = TextAnchor.MiddleCenter;

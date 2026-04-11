@@ -2,20 +2,21 @@
 using System.Collections.Generic;
 using BepInEx.Configuration;
 using GorillaLocomotion;
-using Grate.Extensions;
-using Grate.Gestures;
-using Grate.GUI;
-using Grate.Interaction;
-using Grate.Networking;
-using Grate.Patches;
-using Grate.Tools;
+using Bark.Extensions;
+using Bark.Gestures;
+using Bark.GUI;
+using Bark.Interaction;
+using Bark.Modules.Movement;
+using Bark.Networking;
+using Bark.Patches;
+using Bark.Tools;
 using HarmonyLib;
 using Photon.Pun;
 using UnityEngine;
 
-namespace Grate.Modules.Physics;
+namespace Bark.Modules.Physics;
 
-public class Potions : GrateModule
+public class Potions : BarkModule
 {
     public static readonly string DisplayName = "Potions";
     public static SizeChanger sizeChanger;
@@ -24,7 +25,7 @@ public class Potions : GrateModule
     public static bool active;
 
     // Networking
-    public static readonly string playerSizeKey = "GratePlayerSize";
+    public static readonly string playerSizeKey = "BarkPlayerSize";
     public static Dictionary<VRRig, SizeChanger> sizeChangers = new();
 
     public static ConfigEntry<bool> ShowNetworkedSizes, ShowPotions;
@@ -66,6 +67,8 @@ public class Potions : GrateModule
         base.OnEnable();
         active = false;
         Setup();
+
+        Plugin.MenuController.GetComponent<Climb>().button.AddBlocker(ButtonController.Blocker.MOD_INCOMPAT);
     }
 
     protected override void OnDestroy()
@@ -142,7 +145,7 @@ public class Potions : GrateModule
             var scale = (float)Math.Sqrt(GTPlayer.Instance.scale);
 
             NetworkPropertyHandler.Instance?.ChangeProperty(playerSizeKey, scale);
-            sizeChanger = new GameObject("Grate Size Changer").AddComponent<SizeChanger>();
+            sizeChanger = new GameObject("Bark Size Changer").AddComponent<SizeChanger>();
             sizeChangerTraverse = Traverse.Create(sizeChanger);
             minScale = sizeChangerTraverse.Field("minScale");
             maxScale = sizeChangerTraverse.Field("maxScale");
@@ -180,7 +183,7 @@ public class Potions : GrateModule
             holster.localPosition = offset;
 
             var sizePotion = potion.AddComponent<SizePotion>();
-            sizePotion.name = isLeft ? "Grate Shrink Potion" : "Grate Grow Potion";
+            sizePotion.name = isLeft ? "Bark Shrink Potion" : "Bark Grow Potion";
             sizePotion.Holster(holster);
             sizePotion.OnDrink += DrinkPotion;
             sizePotion.GetComponent<Renderer>().material = isLeft ? shrinkMaterial : growMaterial;
@@ -223,6 +226,8 @@ public class Potions : GrateModule
         {
             Logging.Exception(e);
         }
+
+        Plugin.MenuController.GetComponent<Climb>().button.RemoveBlocker(ButtonController.Blocker.MOD_INCOMPAT);
     }
 
     public override string GetDisplayName()
@@ -232,9 +237,9 @@ public class Potions : GrateModule
 
     public override string Tutorial()
     {
-        return string.Format("- Grab the potion off of your waist with [Grip].\n" +
-                             "- Pop the cork with the other [Grip].\n" +
-                             "- Tilt the potion to drink it.\n\n" +
+        return string.Format("Grab a Potion off of your Waist with [GRIP].\n" +
+                             "Pop the Cork with the other [GRIP].\n" +
+                             "Drink the Potion to Grow/Shrink.\n\n" +
                              "Current size: {0:0.##}x", GTPlayer.Instance.scale);
     }
 
@@ -292,7 +297,7 @@ public class Potions : GrateModule
 
     public static SizeChanger CreateSizeChanger(float scale)
     {
-        var sizeChanger = new GameObject("Grate Size Changer").AddComponent<SizeChanger>();
+        var sizeChanger = new GameObject("Bark Size Changer").AddComponent<SizeChanger>();
         var sizeChangerTraverse = Traverse.Create(sizeChanger);
         var minScale = sizeChangerTraverse.Field("minScale");
         var maxScale = sizeChangerTraverse.Field("maxScale");
@@ -304,7 +309,7 @@ public class Potions : GrateModule
     }
 }
 
-public class SizePotion : GrateGrabbable
+public class SizePotion : BarkGrabbable
 {
     public Transform holster;
     public AudioSource gulp;
@@ -401,20 +406,20 @@ public class SizePotion : GrateGrabbable
         return cork.transform.parent == transform;
     }
 
-    public override void OnSelect(GrateInteractor interactor)
+    public override void OnSelect(BarkInteractor interactor)
     {
         base.OnSelect(interactor);
         if (cork)
             cork.enabled = true;
     }
 
-    public override void OnDeselect(GrateInteractor interactor)
+    public override void OnDeselect(BarkInteractor interactor)
     {
         base.OnDeselect(interactor);
         Holster(holster);
     }
 
-    public override void OnPrimaryReleased(GrateInteractor interactor)
+    public override void OnPrimaryReleased(BarkInteractor interactor)
     {
         base.OnPrimaryReleased(interactor);
         if (IsCorked())
@@ -424,7 +429,7 @@ public class SizePotion : GrateGrabbable
         }
     }
 
-    public override void OnActivate(GrateInteractor interactor)
+    public override void OnActivate(BarkInteractor interactor)
     {
         base.OnActivate(interactor);
     }
@@ -449,7 +454,7 @@ public class SizePotion : GrateGrabbable
     }
 }
 
-public class Cork : GrateGrabbable
+public class Cork : BarkGrabbable
 {
     public Rigidbody rb;
     public bool shouldPlayPopSound = true;
@@ -466,7 +471,7 @@ public class Cork : GrateGrabbable
         popSource = GetComponent<AudioSource>();
     }
 
-    public override void OnSelect(GrateInteractor interactor)
+    public override void OnSelect(BarkInteractor interactor)
     {
         base.OnSelect(interactor);
         if (shouldPlayPopSound)

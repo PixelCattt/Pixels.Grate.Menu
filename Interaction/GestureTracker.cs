@@ -2,15 +2,15 @@
 using System.Collections.Generic;
 using System.Linq;
 using GorillaLocomotion;
-using Grate.Extensions;
-using Grate.Tools;
+using Bark.Extensions;
+using Bark.Tools;
 using HarmonyLib;
 using UnityEngine;
 using UnityEngine.XR;
 using UnityEngine.XR.Interaction.Toolkit;
 using Valve.VR;
 
-namespace Grate.Gestures;
+namespace Bark.Gestures;
 
 public class GestureTracker : MonoBehaviour
 {
@@ -35,7 +35,7 @@ public class GestureTracker : MonoBehaviour
         leftHand,
         rightHand;
 
-    public GrateInteractor
+    public BarkInteractor
         leftPalmInteractor,
         rightPalmInteractor,
         leftPointerInteractor,
@@ -316,10 +316,10 @@ public class GestureTracker : MonoBehaviour
         rightThumbTransform = GameObject.Find(string.Format(localRigPath + thumbPath, "R")).transform;
     }
 
-    public GrateInteractor CreateInteractor(string name, Transform parent, float scale)
+    public BarkInteractor CreateInteractor(string name, Transform parent, float scale)
     {
         var obj = new GameObject(name);
-        var interactor = obj.AddComponent<GrateInteractor>();
+        var interactor = obj.AddComponent<BarkInteractor>();
         obj.transform.SetParent(parent, false);
         obj.transform.localScale = Vector3.one * scale;
         return interactor;

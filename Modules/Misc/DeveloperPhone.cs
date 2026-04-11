@@ -1,16 +1,16 @@
 ﻿using System;
-using Grate.Extensions;
-using Grate.Gestures;
-using Grate.GUI;
-using Grate.Networking;
-using Grate.Patches;
-using Grate.Tools;
+using Bark.Extensions;
+using Bark.Gestures;
+using Bark.GUI;
+using Bark.Networking;
+using Bark.Patches;
+using Bark.Tools;
 using UnityEngine;
 using NetworkPlayer = NetPlayer;
 
-namespace Grate.Modules.Misc;
+namespace Bark.Modules.Misc;
 
-public class DeveloperPhone : GrateModule
+public class DeveloperPhone : BarkModule
 {
     private static readonly string DisplayName = "Dev Phone";
     private static GameObject? _phone;

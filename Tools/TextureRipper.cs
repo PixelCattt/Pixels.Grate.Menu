@@ -1,10 +1,10 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.IO;
-using Grate.Extensions;
+using Bark.Extensions;
 using UnityEngine;
 
-namespace Grate.Tools;
+namespace Bark.Tools;
 
 public static class TextureRipper
 {

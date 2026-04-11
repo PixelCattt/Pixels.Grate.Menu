@@ -1,16 +1,16 @@
 ﻿using System;
-using Grate.Extensions;
-using Grate.Gestures;
-using Grate.GUI;
-using Grate.Networking;
-using Grate.Patches;
-using Grate.Tools;
+using Bark.Extensions;
+using Bark.Gestures;
+using Bark.GUI;
+using Bark.Networking;
+using Bark.Patches;
+using Bark.Tools;
 using UnityEngine;
 using NetworkPlayer = NetPlayer;
 
-namespace Grate.Modules.Misc;
+namespace Bark.Modules.Misc;
 
-public class WaterGun : GrateModule
+public class WaterGun : BarkModule
 {
     public static string DisplayName = "Water Gun";
     private static GameObject WaterGunObj;
@@ -93,7 +93,7 @@ public class WaterGun : GrateModule
 
     public override string Tutorial()
     {
-        return "Water Gun equipped.";
+        return "[RIGHT GRIP] to equip your Water Gun.";
     }
 
     private class NetWaterGun : MonoBehaviour
@@ -109,9 +109,9 @@ public class WaterGun : GrateModule
             waterGun = Instantiate(WaterGunObj);
 
             waterGun.transform.SetParent(rightHand);
-            waterGun.transform.localPosition = new Vector3(0.0992f, 0.06f, 0.02f);
-            waterGun.transform.localRotation = Quaternion.Euler(2, 100, 180);
-            waterGun.transform.localScale = waterGun.transform.localScale * 0.5f;
+            waterGun.transform.localPosition = new Vector3(-0.35f, 0.25f, 0.5f);;
+            waterGun.transform.localRotation = Quaternion.Euler(-90, 270, 180);
+            waterGun.transform.localScale = waterGun.transform.localScale * 0.125f;
 
             waterGun.SetActive(false);
 

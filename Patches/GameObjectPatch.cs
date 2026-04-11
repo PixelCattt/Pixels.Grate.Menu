@@ -1,7 +1,7 @@
 using HarmonyLib;
 using UnityEngine;
 
-namespace Grate.Patches;
+namespace Bark.Patches;
 
 [HarmonyPatch(typeof(GameObject))]
 [HarmonyPatch(nameof(GameObject.CreatePrimitive), MethodType.Normal)]

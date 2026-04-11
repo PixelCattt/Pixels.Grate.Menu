@@ -1,7 +1,7 @@
 ﻿using System;
 using HarmonyLib;
 
-namespace Grate.Patches;
+namespace Bark.Patches;
 
 [HarmonyPatch(typeof(VRRigCache), nameof(VRRigCache.OnPlayerLeftRoom))]
 public class VRRigCachePatches

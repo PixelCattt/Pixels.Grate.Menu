@@ -1,15 +1,16 @@
 ﻿using System;
 using GorillaLocomotion;
 using GorillaLocomotion.Climbing;
-using Grate.Extensions;
-using Grate.Gestures;
-using Grate.GUI;
-using Grate.Tools;
+using Bark.Extensions;
+using Bark.Gestures;
+using Bark.GUI;
+using Bark.Modules.Physics;
+using Bark.Tools;
 using UnityEngine;
 
-namespace Grate.Modules.Movement;
+namespace Bark.Modules.Movement;
 
-public class Climb : GrateModule
+public class Climb : BarkModule
 {
     public static readonly string DisplayName = "Climb";
     public GameObject climbableLeft, climbableRight;
@@ -36,16 +37,18 @@ public class Climb : GrateModule
         {
             Logging.Exception(e);
         }
+
+        Plugin.MenuController.GetComponent<Potions>().button.AddBlocker(ButtonController.Blocker.MOD_INCOMPAT);
     }
 
     public GameObject CreateClimbable(InputTracker<float>? grip)
     {
         var climbable = GameObject.CreatePrimitive(PrimitiveType.Sphere);
-        climbable.name = "Grate Climb Obj";
+        climbable.name = "Bark Climb Obj";
         climbable.AddComponent<GorillaClimbable>();
         climbable.layer = LayerMask.NameToLayer("GorillaInteractable");
         climbable.GetComponent<Renderer>().enabled = false;
-        climbable.transform.localScale = Vector3.one * .15f;
+        climbable.transform.localScale = Vector3.one * .15f * GTPlayer.Instance.scale;
         climbable.SetActive(false);
         grip.OnPressed += OnGrip;
         grip.OnReleased += OnRelease;
@@ -77,13 +80,8 @@ public class Climb : GrateModule
 
             if (colliders.Length > 0)
             {
-                // foreach(var collider in colliders)
-                // {
-                //     Logging.Debug("Hit", collider.gameObject.name);
-                // }
                 climbable.transform.position = hand.position;
                 climbable.SetActive(true);
-                // Sounds.Play(Sound.DragonSqueeze, 1f);
             }
         }
     }
@@ -111,6 +109,8 @@ public class Climb : GrateModule
             rightGrip.OnPressed -= OnGrip;
             rightGrip.OnReleased -= OnRelease;
         }
+
+        Plugin.MenuController.GetComponent<Potions>().button.RemoveBlocker(ButtonController.Blocker.MOD_INCOMPAT);
     }
 
     public override string GetDisplayName()
@@ -120,6 +120,6 @@ public class Climb : GrateModule
 
     public override string Tutorial()
     {
-        return "Press [Grip] with either hand to stick to a surface.";
+        return "[GRIP] to hold on to a Surface.";
     }
 }

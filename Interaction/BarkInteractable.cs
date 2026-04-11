@@ -1,30 +1,30 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Linq;
-using Grate.Gestures;
+using Bark.Gestures;
 using UnityEngine;
 
-namespace Grate.Interaction;
+namespace Bark.Interaction;
 
-public class GrateInteractable : MonoBehaviour
+public class BarkInteractable : MonoBehaviour
 {
-    public GrateInteractor[] validSelectors;
-    public List<GrateInteractor> selectors = new();
-    public List<GrateInteractor> hoverers = new();
+    public BarkInteractor[] validSelectors;
+    public List<BarkInteractor> selectors = new();
+    public List<BarkInteractor> hoverers = new();
     public int priority;
     public bool Activated;
     public bool Primary;
     private GestureTracker gt;
-    public Action<GrateInteractable, GrateInteractor> OnActivateEnter, OnActivateExit;
-    public Action<GrateInteractable, GrateInteractor> OnHoverEnter, OnHoverExit;
-    public Action<GrateInteractable, GrateInteractor> OnPrimaryEnter, OnPrimaryExit;
-    public Action<GrateInteractable, GrateInteractor> OnSelectEnter, OnSelectExit;
+    public Action<BarkInteractable, BarkInteractor> OnActivateEnter, OnActivateExit;
+    public Action<BarkInteractable, BarkInteractor> OnHoverEnter, OnHoverExit;
+    public Action<BarkInteractable, BarkInteractor> OnPrimaryEnter, OnPrimaryExit;
+    public Action<BarkInteractable, BarkInteractor> OnSelectEnter, OnSelectExit;
     public bool Selected => selectors.Count > 0;
 
     protected virtual void Awake()
     {
         gt = GestureTracker.Instance;
-        gameObject.layer = GrateInteractor.InteractionLayer;
+        gameObject.layer = BarkInteractor.InteractionLayer;
         validSelectors = new[] { gt.leftPalmInteractor, gt.rightPalmInteractor };
     }
 
@@ -38,7 +38,7 @@ public class GrateInteractable : MonoBehaviour
 
     protected virtual void OnTriggerEnter(Collider collider)
     {
-        if (collider.GetComponent<GrateInteractor>() is GrateInteractor interactor)
+        if (collider.GetComponent<BarkInteractor>() is BarkInteractor interactor)
         {
             if (!CanBeSelected(interactor) || interactor.hovered.Contains(this)) return;
             if (interactor.Selecting)
@@ -57,7 +57,7 @@ public class GrateInteractable : MonoBehaviour
     protected virtual void OnTriggerExit(Collider collider)
     {
         if (!enabled) return;
-        if (collider.GetComponent<GrateInteractor>() is GrateInteractor interactor)
+        if (collider.GetComponent<BarkInteractor>() is BarkInteractor interactor)
         {
             if (!interactor.hovered.Contains(this)) return;
             interactor.hovered.Remove(this);
@@ -66,42 +66,42 @@ public class GrateInteractable : MonoBehaviour
         }
     }
 
-    public virtual bool CanBeSelected(GrateInteractor interactor)
+    public virtual bool CanBeSelected(BarkInteractor interactor)
     {
         return enabled && !Selected && validSelectors.Contains(interactor);
     }
 
-    public virtual void OnSelect(GrateInteractor interactor)
+    public virtual void OnSelect(BarkInteractor interactor)
     {
         selectors.Add(interactor);
         OnSelectEnter?.Invoke(this, interactor);
     }
 
-    public virtual void OnDeselect(GrateInteractor interactor)
+    public virtual void OnDeselect(BarkInteractor interactor)
     {
         selectors.Remove(interactor);
         OnSelectExit?.Invoke(this, interactor);
     }
 
-    public virtual void OnActivate(GrateInteractor interactor)
+    public virtual void OnActivate(BarkInteractor interactor)
     {
         Activated = true;
         OnActivateEnter?.Invoke(this, interactor);
     }
 
-    public virtual void OnDeactivate(GrateInteractor interactor)
+    public virtual void OnDeactivate(BarkInteractor interactor)
     {
         Activated = false;
         OnActivateExit?.Invoke(this, interactor);
     }
 
-    public virtual void OnPrimary(GrateInteractor interactor)
+    public virtual void OnPrimary(BarkInteractor interactor)
     {
         Primary = true;
         OnPrimaryEnter?.Invoke(this, interactor);
     }
 
-    public virtual void OnPrimaryReleased(GrateInteractor interactor)
+    public virtual void OnPrimaryReleased(BarkInteractor interactor)
     {
         Primary = false;
         OnPrimaryExit?.Invoke(this, interactor);

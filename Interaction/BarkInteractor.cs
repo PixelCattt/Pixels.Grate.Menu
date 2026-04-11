@@ -1,19 +1,19 @@
 ﻿using System;
 using System.Collections.Generic;
-using Grate.Interaction;
-using Grate.Tools;
+using Bark.Interaction;
+using Bark.Tools;
 using UnityEngine;
 using UnityEngine.XR;
 
-namespace Grate.Gestures;
+namespace Bark.Gestures;
 
-public class GrateInteractor : MonoBehaviour
+public class BarkInteractor : MonoBehaviour
 {
     public static string InteractionLayerName = "TransparentFX";
     public static int InteractionLayer = LayerMask.NameToLayer(InteractionLayerName);
     public static int InteractionLayerMask = LayerMask.GetMask(InteractionLayerName);
 
-    public List<GrateInteractable>
+    public List<BarkInteractable>
         hovered = new(),
         selected = new();
 
@@ -51,7 +51,7 @@ public class GrateInteractor : MonoBehaviour
         }
     }
 
-    public void Select(GrateInteractable interactable)
+    public void Select(BarkInteractable interactable)
     {
         try
         {
@@ -73,12 +73,12 @@ public class GrateInteractor : MonoBehaviour
         }
     }
 
-    public void Deselect(GrateInteractable interactable)
+    public void Deselect(BarkInteractable interactable)
     {
         interactable.OnDeselect(this);
     }
 
-    public void Hover(GrateInteractable interactable)
+    public void Hover(BarkInteractable interactable)
     {
         hovered.Add(interactable);
     }
@@ -87,7 +87,7 @@ public class GrateInteractor : MonoBehaviour
     {
         if (Selecting) return;
         Selecting = true;
-        GrateInteractable selected = null;
+        BarkInteractable selected = null;
         foreach (var interactable in hovered)
             if (interactable.CanBeSelected(this))
             {

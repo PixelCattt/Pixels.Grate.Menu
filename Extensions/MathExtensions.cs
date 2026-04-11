@@ -1,7 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
 
-namespace Grate.Extensions;
+namespace Bark.Extensions;
 
 public static class MathExtensions
 {

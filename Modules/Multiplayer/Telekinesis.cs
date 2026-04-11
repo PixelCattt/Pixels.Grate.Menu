@@ -2,16 +2,16 @@
 using System.Collections.Generic;
 using BepInEx.Configuration;
 using GorillaLocomotion;
-using Grate.Extensions;
-using Grate.Gestures;
-using Grate.GUI;
-using Grate.Tools;
+using Bark.Extensions;
+using Bark.Gestures;
+using Bark.GUI;
+using Bark.Tools;
 using UnityEngine;
 using UnityEngine.XR;
 
-namespace Grate.Modules.Multiplayer;
+namespace Bark.Modules.Multiplayer;
 
-public class Telekinesis : GrateModule
+public class Telekinesis : BarkModule
 {
     public static readonly string DisplayName = "Telekinesis";
     public static Telekinesis Instance;
@@ -42,7 +42,7 @@ public class Telekinesis : GrateModule
         if (sithLord)
         {
             var rb = GTPlayer.Instance.bodyCollider.attachedRigidbody;
-            if (!sithLord.IsGripping())
+            if (!sithLord.IsGripping() || (SelectSith && sithLord.rig != ChosenSith))
             {
                 sithLord = null;
                 sfx.Stop();
@@ -73,9 +73,9 @@ public class Telekinesis : GrateModule
             ReloadConfiguration();
             var prefab = Plugin.AssetBundle.LoadAsset<GameObject>("TK Hitbox");
             var hitbox = Instantiate(prefab);
-            hitbox.name = "Grate TK Hitbox";
+            hitbox.name = "Bark TK Hitbox";
             hitbox.transform.SetParent(GTPlayer.Instance.bodyCollider.transform, false);
-            hitbox.layer = GrateInteractor.InteractionLayer;
+            hitbox.layer = BarkInteractor.InteractionLayer;
             tkCollider = hitbox.GetComponent<SphereCollider>();
             tkCollider.isTrigger = true;
             playerParticles = hitbox.GetComponent<ParticleSystem>();
@@ -84,9 +84,9 @@ public class Telekinesis : GrateModule
             sfx = hitbox.GetComponent<AudioSource>();
 
             var sithlordEffect = Instantiate(prefab);
-            sithlordEffect.name = "Grate Sithlord Particles";
+            sithlordEffect.name = "Bark Sithlord Particles";
             sithlordEffect.transform.SetParent(GTPlayer.Instance.bodyCollider.transform, false);
-            sithlordEffect.layer = GrateInteractor.InteractionLayer;
+            sithlordEffect.layer = BarkInteractor.InteractionLayer;
             sithlordHandParticles = sithlordEffect.GetComponent<ParticleSystem>();
             var shape = sithlordHandParticles.shape;
             shape.radius = .2f;
@@ -237,7 +237,8 @@ public class Telekinesis : GrateModule
 
     public override string Tutorial()
     {
-        return "Effect: If another player points their index finger at you, they can pick you up with telekinesis.";
+        return "If another Player Points their index Finger at you, they can pick you up with Telekinesis.\n" +
+               "Use the allow Gun Setting to only allow one selected Player to use Telekinesis.";
     }
 
     public class TKMarker : MonoBehaviour

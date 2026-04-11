@@ -1,17 +1,17 @@
 ﻿using System;
 using BepInEx.Configuration;
 using GorillaLocomotion;
-using Grate.Extensions;
-using Grate.Gestures;
-using Grate.GUI;
-using Grate.Interaction;
-using Grate.Tools;
+using Bark.Extensions;
+using Bark.Gestures;
+using Bark.GUI;
+using Bark.Interaction;
+using Bark.Tools;
 using UnityEngine;
 using Random = UnityEngine.Random;
 
-namespace Grate.Modules.Movement;
+namespace Bark.Modules.Movement;
 
-public class Rockets : GrateModule
+public class Rockets : BarkModule
 {
     public static readonly string DisplayName = "Rockets";
     public static Rockets Instance;
@@ -67,7 +67,7 @@ public class Rockets : GrateModule
     {
         try
         {
-            rocketObj.name = isLeft ? "Grate Rocket Left" : "Grate Rocket Right";
+            rocketObj.name = isLeft ? "Bark Rocket Left" : "Bark Rocket Right";
             var rocket = rocketObj.AddComponent<Rocket>().Init(isLeft);
             rocket.LocalPosition = new Vector3(0.51f, -3, 0f);
             rocket.LocalRotation = new Vector3(0, 0, -90);
@@ -134,11 +134,11 @@ public class Rockets : GrateModule
 
     public override string Tutorial()
     {
-        return "Hold either [Grip] to summon a rocket.";
+        return "[GRIP] to summon a Rocket on your Hand to Fly.";
     }
 }
 
-public class Rocket : GrateGrabbable
+public class Rocket : BarkGrabbable
 {
     public float power = 5f, volume = .2f;
     public AudioSource exhaustSound;
@@ -208,7 +208,7 @@ public class Rocket : GrateGrabbable
         exhaustSound.Play();
     }
 
-    public override void OnDeselect(GrateInteractor interactor)
+    public override void OnDeselect(BarkInteractor interactor)
     {
         base.OnDeselect(interactor);
         rb.velocity = GTPlayer.Instance.GetComponent<Rigidbody>().velocity;
@@ -217,6 +217,6 @@ public class Rocket : GrateGrabbable
     public void SetupInteraction()
     {
         throwOnDetach = true;
-        gameObject.layer = GrateInteractor.InteractionLayer;
+        gameObject.layer = BarkInteractor.InteractionLayer;
     }
 }

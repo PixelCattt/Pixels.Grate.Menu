@@ -1,16 +1,17 @@
 ﻿using System;
 using BepInEx.Configuration;
+using GorillaLocomotion;
 using GorillaLocomotion.Climbing;
-using Grate.Extensions;
-using Grate.Gestures;
-using Grate.GUI;
-using Grate.Tools;
+using Bark.Extensions;
+using Bark.Gestures;
+using Bark.GUI;
+using Bark.Tools;
 using UnityEngine;
 using UnityEngine.XR;
 
-namespace Grate.Modules.Movement;
+namespace Bark.Modules.Movement;
 
-public class NailGun : GrateModule
+public class NailGun : BarkModule
 {
     public static readonly string DisplayName = "Nail Gun";
     public static GameObject launcherPrefab, nailPrefab;
@@ -91,6 +92,7 @@ public class NailGun : GrateModule
             var end = GetEndpoint(barrel.transform.position, barrel.transform.forward);
             if (!end.HasValue) return null;
             nail.transform.position = end.Value;
+            nail.transform.localScale *= GTPlayer.Instance.scale;
             nail.transform.rotation = barrel.transform.rotation;
             nail.AddComponent<GorillaClimbable>();
             return nail;
@@ -211,8 +213,9 @@ public class NailGun : GrateModule
 
     public override string Tutorial()
     {
-        var h = LauncherHand.Value.Substring(0, 1).ToUpper() + LauncherHand.Value.Substring(1);
-        return $"Hold [{h} Trigger] to summon the nailgun. Release [{h} Trigger] to fire a climbable nail. " +
-               $"Grip the nail to climb it.";
+        var h = LauncherHand.Value.ToUpper();
+        return $"[{h} TRIGGER] to grab the Nailgun.\n" +
+               $"Release [{h} TRIGGER] to Fire a climbable Nail.\n" +
+               $"Grip the Nail to hold on to it.";
     }
 }

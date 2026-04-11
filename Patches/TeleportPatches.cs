@@ -3,13 +3,13 @@
 
 using System;
 using System.Threading.Tasks;
-using Grate.Modules.Physics;
-using Grate.Tools;
+using Bark.Modules.Physics;
+using Bark.Tools;
 using HarmonyLib;
 using UnityEngine;
 using Player = GorillaLocomotion.GTPlayer;
 
-namespace Grate.Patches;
+namespace Bark.Patches;
 
 [HarmonyPatch(typeof(Player), nameof(Player.AntiTeleportTechnology))]
 internal class PlayerAntiAntiTeleport

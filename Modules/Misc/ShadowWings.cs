@@ -1,15 +1,15 @@
-using Grate.Extensions;
-using Grate.GUI;
-using Grate.Networking;
-using Grate.Patches;
-using Grate.Tools;
+using Bark.Extensions;
+using Bark.GUI;
+using Bark.Networking;
+using Bark.Patches;
+using Bark.Tools;
 using UnityEngine;
 using UnityEngine.EventSystems;
 using NetworkPlayer = NetPlayer;
 
-namespace Grate.Modules.Movement;
+namespace Bark.Modules.Movement;
 
-public class ShadowWings : GrateModule
+public class ShadowWings : BarkModule
 {
     private static GameObject? localWings;
     public static string DisplayName = "Shadow Wings";
@@ -54,7 +54,7 @@ public class ShadowWings : GrateModule
     }
 
     private void OnRigCached(NetPlayer player, VRRig rig) => rig?.gameObject?.GetComponent<NetShadWing>()?.Obliterate();
-    public override string Tutorial() => "Gives you hella Cool Wings.";
+    public override string Tutorial() => "Gives you Cool Red Wings.";
     public override string GetDisplayName() => DisplayName;
 
     private class NetShadWing : MonoBehaviour

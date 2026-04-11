@@ -1,7 +1,7 @@
 <?xml version="1.0" encoding="utf-8" ?>
 <Project>
   <PropertyGroup>
-    <IsMainProject Condition="'$(MSBuildProjectName)' == 'Grate'">true</IsMainProject>
+    <IsMainProject Condition="'$(MSBuildProjectName)' == 'Bark'">true</IsMainProject>
   </PropertyGroup>
 
   <!-- Update Game References -->

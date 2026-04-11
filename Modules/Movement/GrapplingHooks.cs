@@ -1,16 +1,16 @@
 ﻿using System;
 using BepInEx.Configuration;
 using GorillaLocomotion;
-using Grate.Extensions;
-using Grate.Gestures;
-using Grate.GUI;
-using Grate.Interaction;
-using Grate.Tools;
+using Bark.Extensions;
+using Bark.Gestures;
+using Bark.GUI;
+using Bark.Interaction;
+using Bark.Tools;
 using UnityEngine;
 
-namespace Grate.Modules.Movement;
+namespace Bark.Modules.Movement;
 
-public class GrapplingHooks : GrateModule
+public class GrapplingHooks : BarkModule
 {
     public static readonly string DisplayName = "Grappling Hooks";
 
@@ -164,13 +164,12 @@ public class GrapplingHooks : GrateModule
 
     public override string Tutorial()
     {
-        return "Grab the grappling hook off of your waist with [Grip]. " +
-               "Then fire with [Trigger]. " +
-               "You can steer in the air by pointing the guns where you want to go.";
+        return "Grab the Grappling Hooks off of your Waist with [GRIP].\n" +
+               "[TRIGGER] to Fire.";
     }
 }
 
-public class BananaGun : GrateGrabbable
+public class BananaGun : BarkGrabbable
 {
     public enum RopeType
     {
@@ -256,13 +255,13 @@ public class BananaGun : GrateGrabbable
             laser.enabled = false;
     }
 
-    public override void OnActivate(GrateInteractor interactor)
+    public override void OnActivate(BarkInteractor interactor)
     {
         base.OnActivate(interactor);
         Activated = true;
     }
 
-    public override void OnDeactivate(GrateInteractor interactor)
+    public override void OnDeactivate(BarkInteractor interactor)
     {
         base.OnDeactivate(interactor);
         Activated = false;
@@ -343,7 +342,7 @@ public class BananaGun : GrateGrabbable
         }
     }
 
-    public override void OnDeselect(GrateInteractor interactor)
+    public override void OnDeselect(BarkInteractor interactor)
     {
         base.OnDeselect(interactor);
         laser.enabled = false;
@@ -353,11 +352,11 @@ public class BananaGun : GrateGrabbable
     public void SetupInteraction()
     {
         throwOnDetach = false;
-        gameObject.layer = GrateInteractor.InteractionLayer;
+        gameObject.layer = BarkInteractor.InteractionLayer;
         if (openModel)
-            openModel.layer = GrateInteractor.InteractionLayer;
+            openModel.layer = BarkInteractor.InteractionLayer;
         if (closedModel)
-            closedModel.layer = GrateInteractor.InteractionLayer;
+            closedModel.layer = BarkInteractor.InteractionLayer;
     }
 
     private void Open()

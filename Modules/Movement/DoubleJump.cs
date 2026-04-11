@@ -1,12 +1,12 @@
 ﻿using BepInEx.Configuration;
 using GorillaLocomotion;
-using Grate.Gestures;
-using Grate.GUI;
+using Bark.Gestures;
+using Bark.GUI;
 using UnityEngine;
 
-namespace Grate.Modules.Movement;
+namespace Bark.Modules.Movement;
 
-public class DoubleJump : GrateModule
+public class DoubleJump : BarkModule
 {
     public static readonly string DisplayName = "Double Jump";
     public static bool canDoubleJump = true;
@@ -80,6 +80,6 @@ public class DoubleJump : GrateModule
 
     public override string Tutorial()
     {
-        return "Press [A / B] on your right controller to do a double jump in the air.";
+        return "Press [A / B] to do a Jump in the Air.";
     }
 }

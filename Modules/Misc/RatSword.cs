@@ -1,17 +1,17 @@
 ﻿using System;
-using Grate.Extensions;
-using Grate.Gestures;
-using Grate.GUI;
-using Grate.Modules.Movement;
-using Grate.Networking;
-using Grate.Patches;
-using Grate.Tools;
+using Bark.Extensions;
+using Bark.Gestures;
+using Bark.GUI;
+using Bark.Modules.Movement;
+using Bark.Networking;
+using Bark.Patches;
+using Bark.Tools;
 using UnityEngine;
 using NetworkPlayer = NetPlayer;
 
-namespace Grate.Modules.Misc;
+namespace Bark.Modules.Misc;
 
-public class RatSword : GrateModule
+public class RatSword : BarkModule
 {
     private static readonly string DisplayName = "Rat Sword";
     private static GameObject? Sword;
@@ -94,8 +94,8 @@ public class RatSword : GrateModule
 
     public override string Tutorial()
     {
-        return "I met a lil' kid in canyons who wanted kyle to make him a sword.\n" +
-               "[Grip] to wield your weapon, rat kid.";
+        return "I met a lil' kid in Canyons who wanted a Sword.\n" +
+               "[RIGHT GRIP] to wield your Weapon.";
     }
 
     private class NetSword : MonoBehaviour

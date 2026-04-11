@@ -1,9 +1,9 @@
-﻿using Grate.GUI;
-using Grate.Patches;
+﻿using Bark.GUI;
+using Bark.Patches;
 
-namespace Grate.Modules.Physics;
+namespace Bark.Modules.Physics;
 
-public class SlipperyHands : GrateModule
+public class SlipperyHands : BarkModule
 {
     public static readonly string DisplayName = "Slippery Hands";
     public static SlipperyHands Instance;
@@ -33,6 +33,6 @@ public class SlipperyHands : GrateModule
 
     public override string Tutorial()
     {
-        return "Effect: All surfaces become slippery.";
+        return "All surfaces become Slippery.";
     }
 }

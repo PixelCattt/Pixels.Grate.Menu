@@ -1,12 +1,12 @@
 ﻿using System;
 using BepInEx.Configuration;
 using GorillaLocomotion;
-using Grate.GUI;
-using Grate.Tools;
+using Bark.GUI;
+using Bark.Tools;
 
-namespace Grate.Modules;
+namespace Bark.Modules;
 
-public class SpeedBoost : GrateModule
+public class SpeedBoost : BarkModule
 {
     public static readonly string DisplayName = "Speed Boost";
     public static float baseVelocityLimit, scale = 1.5f;
@@ -82,6 +82,6 @@ public class SpeedBoost : GrateModule
 
     public override string Tutorial()
     {
-        return "Effect: Increases your jump strength.";
+        return "Increases your Speed and Jump Strength.";
     }
 }

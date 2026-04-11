@@ -1,16 +1,16 @@
 ﻿using System;
 using System.Collections;
 using GorillaLocomotion;
-using Grate.GUI;
-using Grate.Modules.Movement;
-using Grate.Modules.Multiplayer;
-using Grate.Patches;
-using Grate.Tools;
+using Bark.GUI;
+using Bark.Modules.Movement;
+using Bark.Modules.Multiplayer;
+using Bark.Patches;
+using Bark.Tools;
 using UnityEngine;
 
-namespace Grate.Modules.Physics;
+namespace Bark.Modules.Physics;
 
-public class NoClip : GrateModule
+public class NoClip : BarkModule
 {
     public static readonly string DisplayName = "No Clip";
     public static NoClip Instance;
@@ -99,7 +99,8 @@ public class NoClip : GrateModule
 
     public override string Tutorial()
     {
-        return "Effect: Disables collisions. Automatically enables Fly (Use the sticks to move).";
+        return "Disables Collisions so you can go through Walls.\n" +
+               "Automatically enables Flying with [STICKS].";
     }
 
     private struct GorillaTriggerInfo

@@ -2,7 +2,7 @@
 using BepInEx.Configuration;
 using UnityEngine;
 
-namespace Grate.Extensions;
+namespace Bark.Extensions;
 
 public static class ConfigExtensions
 {

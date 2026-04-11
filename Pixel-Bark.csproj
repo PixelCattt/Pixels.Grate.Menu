@@ -22,15 +22,9 @@
 		<StartArguments>steam://run/1533390</StartArguments>
 	</PropertyGroup>
 
-    <ItemGroup>
-      <None Remove="Resources\gratebundle" />
-    </ItemGroup>
-
-    <ItemGroup>
-      <EmbeddedResource Include="Resources\gratebundle">
-        <CopyToOutputDirectory>Never</CopyToOutputDirectory>
-      </EmbeddedResource>
-    </ItemGroup>
+	<ItemGroup>
+	  <None Remove="Resources\barkbundle" />
+	</ItemGroup>
 
     <ItemGroup>
       <PackageReference Include="BepInEx.AssemblyPublicizer.MSBuild" Version="0.4.3">
@@ -706,6 +700,10 @@
         <Reference Include="ZString">
             <HintPath>$(GameAssemblyPath)\ZString.dll</HintPath>
         </Reference>
+    </ItemGroup>
+
+    <ItemGroup>
+      <EmbeddedResource Include="Resources\barkbundle" />
     </ItemGroup>
 
 </Project>

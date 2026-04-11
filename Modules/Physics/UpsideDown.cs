@@ -1,14 +1,14 @@
 using GorillaLocomotion;
-using Grate.Extensions;
-using Grate.GUI;
-using Grate.Networking;
-using Grate.Patches;
-using Grate.Tools;
+using Bark.Extensions;
+using Bark.GUI;
+using Bark.Networking;
+using Bark.Patches;
+using Bark.Tools;
 using UnityEngine;
 
-namespace Grate.Modules.Physics;
+namespace Bark.Modules.Physics;
 
-public class UpsideDown : GrateModule
+public class UpsideDown : BarkModule
 {
     private Vector3 baseGravity;
 
@@ -22,7 +22,7 @@ public class UpsideDown : GrateModule
         UnityEngine.Physics.gravity = baseGravity;
         
         turnParent.rotation = baseRotation;
-        
+
         Plugin.MenuController?.GetComponent<LowGravity>().button.RemoveBlocker(ButtonController.Blocker.MOD_INCOMPAT);
     }
 
@@ -78,5 +78,6 @@ public class UpsideDown : GrateModule
     }
 
     public override string GetDisplayName() => "Upside Down";
-    public override string Tutorial() => " - Puts you upside down.\n - There is no safeguard! If you fall out of the map, you are done for!";
+    public override string Tutorial() => "!! WARNING !! YOU MAY FALL OUT OF THE MAP !! WARNING !!\n" +
+                                         "Turns you Upside Down.";
 }

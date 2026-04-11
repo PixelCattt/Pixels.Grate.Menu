@@ -3,7 +3,7 @@ using System.Collections.Generic;
 using System.Reflection.Emit;
 using HarmonyLib;
 
-namespace Grate.Patches;
+namespace Bark.Patches;
 
 public class NetworkStatePatch
 {

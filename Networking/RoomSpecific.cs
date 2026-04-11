@@ -1,7 +1,7 @@
 ﻿using System.Linq;
 using UnityEngine;
 
-namespace Grate.Networking;
+namespace Bark.Networking;
 
 internal class RoomSpecific : MonoBehaviour
 {

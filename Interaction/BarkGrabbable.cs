@@ -1,10 +1,10 @@
 ﻿using GorillaLocomotion;
-using Grate.Gestures;
+using Bark.Gestures;
 using UnityEngine;
 
-namespace Grate.Interaction;
+namespace Bark.Interaction;
 
-public class GrateGrabbable : GrateInteractable
+public class BarkGrabbable : BarkInteractable
 {
     public float throwForceMultiplier = 1f;
 
@@ -35,7 +35,7 @@ public class GrateGrabbable : GrateInteractable
         velEstimator = gameObject.AddComponent<GorillaVelocityEstimator>();
     }
 
-    public override void OnSelect(GrateInteractor interactor)
+    public override void OnSelect(BarkInteractor interactor)
     {
         if (GetComponent<Rigidbody>() is Rigidbody rb)
         {
@@ -52,7 +52,7 @@ public class GrateGrabbable : GrateInteractable
         base.OnSelect(interactor);
     }
 
-    public override void OnDeselect(GrateInteractor interactor)
+    public override void OnDeselect(BarkInteractor interactor)
     {
         transform.SetParent(null);
         if (GetComponent<Rigidbody>() is Rigidbody rb)

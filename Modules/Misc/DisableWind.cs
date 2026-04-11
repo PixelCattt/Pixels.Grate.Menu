@@ -1,14 +1,13 @@
-﻿namespace Grate.Modules.Misc;
+﻿namespace Bark.Modules.Misc;
 
-internal class DisableWind : GrateModule
+internal class DisableWind : BarkModule
 {
     public static bool Enabled;
     public static string DisplayName = "Disable Wind";
 
     protected override void Start()
     {
-        Enabled = true;
-        OnEnable();
+        Enabled = false;
     }
 
     protected override void OnEnable()
@@ -24,7 +23,7 @@ internal class DisableWind : GrateModule
 
     public override string Tutorial()
     {
-        return "Disables the wind barriers";
+        return "Disables the Wind Barriers.";
     }
 
     protected override void Cleanup()

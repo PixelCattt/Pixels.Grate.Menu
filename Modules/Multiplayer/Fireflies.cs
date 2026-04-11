@@ -3,13 +3,13 @@ using System.Collections;
 using System.Collections.Generic;
 using System.Linq;
 using GorillaLocomotion;
-using Grate.Extensions;
-using Grate.Gestures;
-using Grate.Patches;
-using Grate.Tools;
+using Bark.Extensions;
+using Bark.Gestures;
+using Bark.Patches;
+using Bark.Tools;
 using UnityEngine;
 
-namespace Grate.Modules.Multiplayer;
+namespace Bark.Modules.Multiplayer;
 
 public class Firefly : MonoBehaviour
 {
@@ -85,11 +85,8 @@ public class Firefly : MonoBehaviour
                 {
                     var color = rig.playerColor;
                     modelRenderer.materials[1].color = color;
-                    //flyRenderer.material.SetColor("_EmissionColor", color);
                     particleRenderer.material.color = color;
-                    //particleRenderer.material.SetColor("_EmissionColor", color);
                     trailRenderer.trailMaterial.color = color;
-                    //trailRenderer.trailMaterial.SetColor("_EmissionColor", color);
 
                     var targetPos = target.position + Vector3.up * .4f * rig.scaleFactor;
                     fly.transform.LookAt(targetPos);
@@ -106,7 +103,6 @@ public class Firefly : MonoBehaviour
                         }
                         else
                         {
-                            //make the fly circle around the player
                             var angle = Time.time * 5 % (Mathf.PI * 2);
                             var x = Mathf.Cos(angle);
                             var z = Mathf.Sin(angle);
@@ -114,9 +110,6 @@ public class Firefly : MonoBehaviour
                             fly.transform.position = targetPos + offset;
                             fly.transform.localScale = Vector3.one * rig.scaleFactor;
                         }
-                        //trail.transform.localScale = Vector3.Lerp(
-                        //    Vector3.one * Player.Instance.scale,
-                        //    Vector3.one * rig.scaleFactor, .1f);
                     }
                 }
             }
@@ -142,7 +135,7 @@ public class Firefly : MonoBehaviour
     }
 }
 
-public class Fireflies : GrateModule
+public class Fireflies : BarkModule
 {
     public static readonly string DisplayName = "Fireflies";
     public static List<Firefly> fireflies = new();
@@ -271,18 +264,6 @@ public class Fireflies : GrateModule
         }
     }
 
-    //public static ConfigEntry<int> PunchForce;
-    //public static void BindConfigEntries()
-    //{
-    //Logging.Debug("Binding", DisplayName, "to config");
-    //PunchForce = Plugin.configFile.Bind(
-    //    section: DisplayName,
-    //    key: "punch force",
-    //    defaultValue: 5,
-    //    description: "How much force will be applied to you when you get punched"
-    //);
-    //}
-
     public override string GetDisplayName()
     {
         return DisplayName;
@@ -290,6 +271,6 @@ public class Fireflies : GrateModule
 
     public override string Tutorial()
     {
-        return "Effect: Hold [Trigger] to summon fireflies that will follow each player upon release";
+        return "[TRIGGER] to summon Fireflies that will follow each Player when Released.";
     }
 }

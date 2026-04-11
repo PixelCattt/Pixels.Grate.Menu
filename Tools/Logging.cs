@@ -1,9 +1,9 @@
 ﻿using System;
 using System.Diagnostics;
 using BepInEx.Logging;
-using Grate.GUI;
+using Bark.GUI;
 
-namespace Grate.Tools;
+namespace Bark.Tools;
 
 public static class Logging
 {
@@ -13,7 +13,7 @@ public static class Logging
 
     public static void Init()
     {
-        logger = Logger.CreateLogSource("Grate");
+        logger = Logger.CreateLogSource("Bark");
     }
 
     public static void Exception(Exception e)

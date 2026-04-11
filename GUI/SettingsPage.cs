@@ -1,33 +1,33 @@
 ﻿using System;
 using System.Collections.Generic;
 using BepInEx.Configuration;
-using Grate;
-using Grate.Extensions;
-using Grate.Gestures;
-using Grate.GUI;
-using Grate.Interaction;
-using Grate.Modules;
-using Grate.Tools;
+using Bark;
+using Bark.Extensions;
+using Bark.Gestures;
+using Bark.GUI;
+using Bark.Interaction;
+using Bark.Modules;
+using Bark.Tools;
 using UnityEngine;
 using UnityEngine.UI;
 
 public class SettingsPage : MonoBehaviour
 {
     private ConfigEntryBase entry;
-    private GrateOptionWheel modSelector, configSelector;
-    private GrateSlider valueSlider;
+    private BarkOptionWheel modSelector, configSelector;
+    private BarkSlider valueSlider;
 
     private void Awake()
     {
         try
         {
-            modSelector = transform.Find("Mod Selector").gameObject.AddComponent<GrateOptionWheel>();
+            modSelector = transform.Find("Mod Selector").gameObject.AddComponent<BarkOptionWheel>();
             modSelector.InitializeValues(GetModulesWithSettings());
 
-            configSelector = transform.Find("Config Selector").gameObject.AddComponent<GrateOptionWheel>();
+            configSelector = transform.Find("Config Selector").gameObject.AddComponent<BarkOptionWheel>();
             configSelector.InitializeValues(GetConfigKeys(modSelector.Selected));
 
-            valueSlider = transform.Find("Value Slider").gameObject.AddComponent<GrateSlider>();
+            valueSlider = transform.Find("Value Slider").gameObject.AddComponent<BarkSlider>();
             entry = GetEntry(modSelector.Selected, configSelector.Selected);
             var info = entry.ValuesInfo();
             valueSlider.InitializeValues(info.AcceptableValues, info.InitialValue);
@@ -82,9 +82,9 @@ public class SettingsPage : MonoBehaviour
         try
         {
             var modulesWithSettings = new List<string> { "General" };
-            foreach (var type in GrateModule.GetGrateModuleTypes())
+            foreach (var type in BarkModule.GetBarkModuleTypes())
             {
-                if (type == typeof(GrateModule)) continue;
+                if (type == typeof(BarkModule)) continue;
                 var bindConfigs = type.GetMethod("BindConfigEntries");
                 if (bindConfigs is null) continue;
 
@@ -113,7 +113,7 @@ public class SettingsPage : MonoBehaviour
     }
 }
 
-public class GrateOptionWheel : MonoBehaviour
+public class BarkOptionWheel : MonoBehaviour
 {
     private string _selected;
     private Transform cylinder;
@@ -223,7 +223,7 @@ public class GrateOptionWheel : MonoBehaviour
     }
 }
 
-public class GrateSlider : MonoBehaviour
+public class BarkSlider : MonoBehaviour
 {
     private Knob _knob;
     private object _selected;
@@ -287,7 +287,7 @@ public class GrateSlider : MonoBehaviour
     }
 }
 
-public class Knob : GrateInteractable
+public class Knob : BarkInteractable
 {
     public int divisions;
     public Action<int>? OnValueChanged;

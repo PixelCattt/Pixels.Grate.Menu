@@ -2,22 +2,22 @@
 using System.Collections;
 using System.Collections.Generic;
 using GorillaNetworking;
-using Grate.Extensions;
-using Grate.Modules;
-using Grate.Tools;
+using Bark.Extensions;
+using Bark.Modules;
+using Bark.Tools;
 using Photon.Pun;
 using Photon.Realtime;
 using UnityEngine;
 using Hashtable = ExitGames.Client.Photon.Hashtable;
 
-namespace Grate.Networking;
+namespace Bark.Networking;
 
 public class NetworkPropertyHandler : MonoBehaviourPunCallbacks
 {
     private const float refreshRate = 1f;
 
     public static NetworkPropertyHandler Instance;
-    public static string versionKey = "GrateVersion";
+    public static string versionKey = "BarkVersion";
     private readonly Hashtable properties = new();
 
     private float lastPropertyUpdate;
@@ -48,7 +48,7 @@ public class NetworkPropertyHandler : MonoBehaviourPunCallbacks
         foreach (var property in properties)
         {
             Logging.Debug(property.Key, ":", property.Value);
-            if ((string)property.Key == GrateModule.enabledModulesKey)
+            if ((string)property.Key == BarkModule.enabledModulesKey)
                 foreach (var mod in (Dictionary<string, bool>)property.Value)
                     if (mod.Value)
                         Logging.Debug("    ", property.Key, "is enabled");
@@ -63,10 +63,10 @@ public class NetworkPropertyHandler : MonoBehaviourPunCallbacks
     {
         var targetNetPlayer = NetworkSystem.Instance.GetPlayer(targetPlayer.ActorNumber);
         if (targetNetPlayer != NetworkSystem.Instance.LocalPlayer)
-            if (changedProps.ContainsKey(GrateModule.enabledModulesKey))
+            if (changedProps.ContainsKey(BarkModule.enabledModulesKey))
             {
-                networkedPlayers[targetPlayer].hasGrate = true;
-                var enabledModules = (Dictionary<string, bool>)changedProps[GrateModule.enabledModulesKey];
+                networkedPlayers[targetPlayer].hasBark = true;
+                var enabledModules = (Dictionary<string, bool>)changedProps[BarkModule.enabledModulesKey];
                 //Logging.Debug(targetPlayer.NickName, "toggled mods:");
                 foreach (var mod in enabledModules)
                     //Logging.Debug(mod.Value ? "  +" : "  -", mod.Key, mod.Value);

@@ -2,19 +2,23 @@
 using System.Collections.Generic;
 using BepInEx.Configuration;
 using GorillaLocomotion;
-using Grate.Extensions;
-using Grate.Gestures;
-using Grate.GUI;
-using Grate.Patches;
-using Grate.Tools;
+using Bark.Extensions;
+using Bark.Gestures;
+using Bark.GUI;
+using Bark.Modules.Misc;
+using Bark.Patches;
+using Bark.Tools;
+using Photon.Voice;
 using UnityEngine;
+using UnityEngine.SocialPlatforms.Impl;
+using UnityEngine.UIElements;
 using UnityEngine.XR;
 
-namespace Grate.Modules.Teleportation;
+namespace Bark.Modules.Teleportation;
 
-public class Portal : GrateModule
+public class Portal : BarkModule
 {
-    public static readonly string DisplayName = "Portals";
+    public static readonly string DisplayName = "Portal Gun";
     public static GameObject launcherPrefab, bluePortal, orangePortal;
 
     public static ConfigEntry<string> LauncherHand;
@@ -45,6 +49,10 @@ public class Portal : GrateModule
             }
 
             launcher = Instantiate(launcherPrefab);
+            launcher.transform.SetParent(GestureTracker.Instance.rightHand.transform, false);
+            launcher.transform.localScale = Vector3.one * 125f;
+            launcher.transform.localPosition = new Vector3(-1.5f, 0.2f, 0.1f);
+            launcher.transform.localRotation = Quaternion.Euler(2, 10, 0);
             launcher.SetActive(false);
             orangeAudio = launcher.transform.Find("OrangeAudio").GetComponent<AudioSource>();
             blueAudio = launcher.transform.Find("BlueAudio").GetComponent<AudioSource>();
@@ -275,7 +283,8 @@ public class Portal : GrateModule
     {
         string buttons = LauncherHand.Value == "right" ? "A / B" : "X / Y";
 
-        var h = LauncherHand.Value.Substring(0, 1).ToUpper() + LauncherHand.Value.Substring(1);
-        return $"Hold [{h} Grip] to summon the portal cannon. Use [{h} {buttons}] to fire the portals.";
+        var h = LauncherHand.Value.ToUpper();
+        return $"[{h} GRIP] to grab the Portal-Cannon.\n" +
+               $"Use [{buttons}] to Fire the Portals.";
     }
 }

@@ -1,11 +1,11 @@
 ﻿using System;
 using GorillaLocomotion;
-using Grate.Modules.Multiplayer;
-using Grate.Modules.Physics;
-using Grate.Tools;
+using Bark.Modules.Multiplayer;
+using Bark.Modules.Physics;
+using Bark.Tools;
 using UnityEngine;
 
-namespace Grate.Gestures;
+namespace Bark.Gestures;
 
 //TODO - Add a timeout on meat beat actions so you can't slowly accumulate them and accidentally trigger the menu
 public class PositionValidator : MonoBehaviour

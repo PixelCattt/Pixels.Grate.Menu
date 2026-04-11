@@ -1,13 +1,13 @@
 ﻿using System.Reflection;
 using BepInEx.Configuration;
 using GorillaLocomotion;
-using Grate.GUI;
-using Grate.Modules.Physics;
+using Bark.GUI;
+using Bark.Modules.Physics;
 using UnityEngine;
 
-namespace Grate.Modules.Movement;
+namespace Bark.Modules.Movement;
 
-public class Wallrun : GrateModule
+public class Wallrun : BarkModule
 {
     public static readonly string DisplayName = "Wall Run";
 
@@ -71,6 +71,6 @@ public class Wallrun : GrateModule
 
     public override string Tutorial()
     {
-        return "Effect: Allows you to walk on any surface, no matter the angle.";
+        return "Allows you to walk on any Surface, including Walls.";
     }
 }

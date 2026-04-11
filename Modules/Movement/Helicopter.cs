@@ -1,12 +1,12 @@
 ﻿using BepInEx.Configuration;
 using GorillaLocomotion;
-using Grate.Gestures;
-using Grate.GUI;
+using Bark.Gestures;
+using Bark.GUI;
 using UnityEngine;
 
-namespace Grate.Modules.Movement;
+namespace Bark.Modules.Movement;
 
-public class Helicopter : GrateModule
+public class Helicopter : BarkModule
 {
     public static readonly string DisplayName = "Helicopter";
 
@@ -103,9 +103,8 @@ public class Helicopter : GrateModule
 
     public override string Tutorial()
     {
-        return "- WARNING: CAN CAUSE MOTION SICKNESS EASILY \n" +
-               " -To spin, do a T-pose (spread your arms out like wings on a Helicopter). \n" +
-               "- Look up to fly up.\n" +
-               "- Look down to fly down.";
+        return "!! WARNING !! CAN CAUSE MOTION SICKNESS !! WARNING !!\n" +
+               "To Spin, do a T-Pose.\n" +
+               "To go up or down, look there with your Head.";
     }
 }

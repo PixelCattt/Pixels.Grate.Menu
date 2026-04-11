@@ -3,17 +3,17 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Reflection;
 using BepInEx.Configuration;
-using Grate.Networking;
-using Grate.Tools;
+using Bark.Networking;
+using Bark.Tools;
 using UnityEngine;
 
-namespace Grate.Modules;
+namespace Bark.Modules;
 
-public abstract class GrateModule : MonoBehaviour
+public abstract class BarkModule : MonoBehaviour
 {
-    public static GrateModule LastEnabled;
+    public static BarkModule LastEnabled;
     public static Dictionary<string, bool> enabledModules = new();
-    public static string enabledModulesKey = "GrateEnabledModules";
+    public static string enabledModulesKey = "BarkEnabledModules";
     public ButtonController button;
     public List<ConfigEntryBase> ConfigEntries;
 
@@ -72,11 +72,11 @@ public abstract class GrateModule : MonoBehaviour
         NetworkPropertyHandler.Instance?.ChangeProperty(enabledModulesKey, enabledModules);
     }
 
-    public static List<Type> GetGrateModuleTypes()
+    public static List<Type> GetBarkModuleTypes()
     {
         try
         {
-            var types = Assembly.GetExecutingAssembly().GetTypes().Where(t => typeof(GrateModule).IsAssignableFrom(t))
+            var types = Assembly.GetExecutingAssembly().GetTypes().Where(t => typeof(BarkModule).IsAssignableFrom(t))
                 .ToList();
             types.Sort((x, y) =>
             {

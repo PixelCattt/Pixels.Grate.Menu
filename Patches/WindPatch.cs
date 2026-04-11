@@ -1,8 +1,8 @@
-﻿using Grate.Modules.Misc;
+﻿using Bark.Modules.Misc;
 using HarmonyLib;
 using UnityEngine;
 
-namespace Grate.Patches;
+namespace Bark.Patches;
 
 [HarmonyPatch(typeof(ForceVolume))]
 [HarmonyPatch(nameof(ForceVolume.SliceUpdate), MethodType.Normal)]

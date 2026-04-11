@@ -1,17 +1,17 @@
 ﻿using System;
 using System.Collections.Generic;
-using Grate.Extensions;
-using Grate.Modules.Movement;
-using Grate.Modules.Multiplayer;
-using Grate.Tools;
+using Bark.Extensions;
+using Bark.Modules.Movement;
+using Bark.Modules.Multiplayer;
+using Bark.Tools;
 using UnityEngine;
 
-namespace Grate.Networking;
+namespace Bark.Networking;
 
 public class NetworkedPlayer : MonoBehaviour
 {
     public VRRig? rig;
-    public bool hasGrate;
+    public bool hasBark;
     private readonly List<MonoBehaviour> modManagers = new();
     private bool leftGripWasPressed, rightGripWasPressed;
     private bool leftThumbWasPressed, rightThumbWasPressed;

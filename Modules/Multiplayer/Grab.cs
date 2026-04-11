@@ -1,15 +1,15 @@
 using System;
 using System.Collections.Generic;
 using GorillaLocomotion;
-using Grate.Extensions;
-using Grate.Gestures;
-using Grate.GUI;
-using Grate.Tools;
+using Bark.Extensions;
+using Bark.Gestures;
+using Bark.GUI;
+using Bark.Tools;
 using UnityEngine;
 
-namespace Grate.Modules.Multiplayer;
+namespace Bark.Modules.Multiplayer;
 
-public class Grab : GrateModule
+public class Grab : BarkModule
 {
     public static readonly string DisplayName = "Grab";
     public static Grab Instance;
@@ -56,10 +56,10 @@ public class Grab : GrateModule
             ReloadConfiguration();
             var prefab = Plugin.AssetBundle.LoadAsset<GameObject>("TK Hitbox");
             var hitbox = Instantiate(prefab);
-            hitbox.name = "Grate GB Hitbox";
+            hitbox.name = "Bark GB Hitbox";
             hitbox.transform.SetParent(GTPlayer.Instance.bodyCollider.transform, false);
             hitbox.transform.localScale = new Vector3(0.2f, 0.2f, 0.2f);
-            hitbox.layer = GrateInteractor.InteractionLayer;
+            hitbox.layer = BarkInteractor.InteractionLayer;
             gbCollider = hitbox.GetComponent<SphereCollider>();
             gbCollider.isTrigger = true;
             DistributeGrabbyThings();
@@ -120,7 +120,7 @@ public class Grab : GrateModule
 
     public override string Tutorial()
     {
-        return "Allows players to grab you!";
+        return "Allows other Players to Grab you!";
     }
 
     public class GBMarker : MonoBehaviour

@@ -2,16 +2,16 @@ using System;
 using BepInEx.Configuration;
 using GorillaLocomotion;
 using GorillaLocomotion.Climbing;
-using Grate.Extensions;
-using Grate.Gestures;
-using Grate.GUI;
-using Grate.Modules.Physics;
-using Grate.Networking;
-using Grate.Tools;
+using Bark.Extensions;
+using Bark.Gestures;
+using Bark.GUI;
+using Bark.Modules.Physics;
+using Bark.Networking;
+using Bark.Tools;
 using UnityEngine;
 using UnityEngine.XR;
 
-namespace Grate.Modules.Movement;
+namespace Bark.Modules.Movement;
 
 public class Platform : MonoBehaviour
 {
@@ -75,7 +75,7 @@ public class Platform : MonoBehaviour
         try
         {
             this.isLeft = isLeft;
-            name = "Grate Platform " + (isLeft ? "Left" : "Right");
+            name = "Bark Platform " + (isLeft ? "Left" : "Right");
             Scale = 1;
             foreach (Transform child in transform)
             {
@@ -120,7 +120,7 @@ public class Platform : MonoBehaviour
     public GorillaClimbable CreateClimbable()
     {
         var climbable = GameObject.CreatePrimitive(PrimitiveType.Sphere);
-        climbable.name = "Grate Climb Obj";
+        climbable.name = "Bark Climb Obj";
         climbable.AddComponent<GorillaClimbable>();
         climbable.layer = LayerMask.NameToLayer("GorillaInteractable");
         climbable.GetComponent<Renderer>().enabled = false;
@@ -137,7 +137,7 @@ public class Platform : MonoBehaviour
     }
 }
 
-public class Platforms : GrateModule
+public class Platforms : BarkModule
 {
     public static readonly string DisplayName = "Platforms";
     public static GameObject platformPrefab;
@@ -369,7 +369,7 @@ public class Platforms : GrateModule
                 "input",
                 "grip",
                 new ConfigDescription(
-                    "Which button you press to activate the platform",
+                    "Which button you press to activate the Platform",
                     new AcceptableValueList<string>("grip", "trigger", "stick", "a/x", "b/y", "velocity")
                 )
             );
@@ -379,7 +379,7 @@ public class Platforms : GrateModule
                 "model",
                 "cloud",
                 new ConfigDescription(
-                    "Which button you press to activate the platform",
+                    "What your Platform looks like",
                     new AcceptableValueList<string>("cloud", "storm cloud", "doug", "ice", "invisible")
                 )
             );
@@ -397,8 +397,8 @@ public class Platforms : GrateModule
 
     public override string Tutorial()
     {
-        return $"Press [{Input.Value}] to spawn a platform you can stand on. " +
-               $"Release [{Input.Value}] to disable it.";
+        return $"[{Input.Value.ToUpper()}] to Spawn a Platform you can stand on.\n" +
+               $"Release [{Input.Value.ToUpper()}] to make it disappear.";
     }
 }
 

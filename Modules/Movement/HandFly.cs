@@ -1,13 +1,13 @@
 ﻿using BepInEx.Configuration;
 using GorillaLocomotion;
-using Grate.Gestures;
-using Grate.GUI;
+using Bark.Gestures;
+using Bark.GUI;
 using UnityEngine;
 using UnityEngine.XR;
 
-namespace Grate.Modules.Movement;
+namespace Bark.Modules.Movement;
 
-public class HandFly : GrateModule
+public class HandFly : BarkModule
 {
     public static string DisplayName = "Hand Fly";
 
@@ -32,7 +32,6 @@ public class HandFly : GrateModule
 
         Vector3 dir = GetFlyDirection();
 
-        // important: stop gravity fighting your flight
         rb.velocity = Vector3.zero;
 
         rb.MovePosition(rb.position + dir * (SpeedScale * multiplier * Time.fixedDeltaTime));
@@ -59,8 +58,6 @@ public class HandFly : GrateModule
 
         return dir.normalized;
     }
-
-    // ===== TRUE HAND SPACE (your system, cleaned & fixed) =====
 
     public static (Vector3 position, Quaternion rotation, Vector3 up, Vector3 forward, Vector3 right)
     GetTrueHandPosition(bool left)
@@ -95,8 +92,6 @@ public class HandFly : GrateModule
     public static (Vector3 position, Quaternion rotation, Vector3 up, Vector3 forward, Vector3 right)
         GetTrueLeftHand() => GetTrueHandPosition(true);
 
-    // ===== INPUT =====
-
     protected override void OnEnable()
     {
         base.OnEnable();
@@ -121,8 +116,8 @@ public class HandFly : GrateModule
 
     public override string Tutorial()
     {
-        return "- Hold trigger to fly in true hand direction\n" +
-               "- Both triggers = double speed";
+        return "[TRIGGER] to Fly in the direction your Hand is Pointing at.\n" +
+               "Press both [TRIGGERS] for more Speed.";
     }
 
     public static void BindConfigEntries()
@@ -131,7 +126,7 @@ public class HandFly : GrateModule
             DisplayName,
             "speed",
             5,
-            "Flight speed"
+            "Flight Speed"
         );
     }
 }

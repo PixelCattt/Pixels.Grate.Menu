@@ -1,236 +1,219 @@
-﻿using System;
-using GorillaLocomotion;
-using Grate.Extensions;
-using Grate.Gestures;
-using Grate.GUI;
-using Grate.Modules.Physics;
-using Grate.Networking;
-using Grate.Tools;
-using Photon.Pun;
+﻿using Bark.GUI;
+using Bark.Gestures;
+using Bark.Patches;
 using UnityEngine;
 using UnityEngine.XR;
+using Bark.Extensions;
+using Bark.Tools;
+using System;
+using Bark.Networking;
+using GorillaLocomotion;
+using Bark.Modules.Physics;
 
-namespace Grate.Modules.Multiplayer;
-
-public class Piggyback : GrateModule
+namespace Bark.Modules.Multiplayer
 {
-    private const float mountDistance = 1.5f;
-    public static readonly string DisplayName = "Piggyback";
-    public static bool mounted;
-
-    public static Piggyback Instance;
-    private readonly Vector3 mountOffset = new(0, 0.25f, -0.25f);
-    private bool latchedWithLeft;
-    private Transform mount;
-    private VRRig mountedRig;
-    private Vector3 mountPosition;
-
-    private void Awake()
+    public class Piggyback : BarkModule
     {
-        Instance = this;
-    }
+        public static readonly string DisplayName = "Piggyback";
+        public static bool mounted;
+        private Transform mount;
+        private VRRig mountedRig;
+        private bool latchedWithLeft;
+        private const float mountDistance = 1.5f;
+        private Vector3 mountOffset = new Vector3(0, .1f, -.5f);
+        private Vector3 mountPosition;
 
-    protected override void Start()
-    {
-        base.Start();
-    }
-
-    private void FixedUpdate()
-    {
-        if (mounted)
+        public static Piggyback Instance;
+        void Awake() { Instance = this; }
+        protected override void Start()
         {
-            if (RevokingConsent(mountedRig))
+            base.Start();
+        }
+
+        void Mount(Transform t, VRRig rig)
+        {
+            mountPosition = GTPlayer.Instance.bodyCollider.transform.position;
+            mountedRig = rig;
+            mounted = true;
+            mount = t;
+            EnableNoClip();
+        }
+
+
+        void Unmount()
+        {
+            mount = null;
+            mounted = false;
+            mountedRig = null;
+            mount = null;
+            DisableNoClip();
+            Invoke(nameof(WarpBack), .05f);
+        }
+        void WarpBack()
+        {
+            TeleportPatch.TeleportPlayer(mountPosition);
+        }
+        void FixedUpdate()
+        {
+
+            if (mounted)
             {
-                Unmount();
-                GorillaTagger.Instance.offlineVRRig.PlayHandTapLocal(98, false, 1f);
-            }
-            else
-            {
-                var position = mount.TransformPoint(mountOffset);
-                GTPlayer.Instance.TeleportTo(position, mount.rotation);
+                if (RevokingConsent(mountedRig))
+                {
+                    Unmount();
+                    GorillaTagger.Instance.offlineVRRig.PlayHandTapLocal(98, false, 1f);
+                }
+                else
+                {
+                    Vector3 position = mount.TransformPoint(mountOffset);
+                    TeleportPatch.TeleportPlayer(position);
+                }
             }
         }
-    }
 
-    protected override void OnEnable()
-    {
-        if (!MenuController.Instance.Built) return;
-        base.OnEnable();
-        GestureTracker.Instance.leftGrip.OnPressed += Latch;
-        GestureTracker.Instance.leftGrip.OnReleased += Unlatch;
-        GestureTracker.Instance.rightGrip.OnPressed += Latch;
-        GestureTracker.Instance.rightGrip.OnReleased += Unlatch;
-    }
-
-    private void Mount(Transform t, VRRig rig)
-    {
-        mountPosition = GTPlayer.Instance.bodyCollider.transform.position;
-        mountedRig = rig;
-        mounted = true;
-        mount = t;
-        EnableNoClip();
-    }
-
-
-    private void Unmount()
-    {
-        mount = null;
-        mounted = false;
-        mountedRig = null;
-        mount = null;
-        DisableNoClip();
-        Invoke(nameof(WarpBack), .05f);
-    }
-
-    private void WarpBack()
-    {
-        GTPlayer.Instance.TeleportTo(mountPosition, GTPlayer.Instance.turnParent.transform.rotation);
-    }
-
-    public RigScanResult ClosestRig(Transform hand)
-    {
-        VRRig closestRig = null;
-        Transform closestTransform = null;
-        var closestDistance = Mathf.Infinity;
-        foreach (var rig in VRRigCache.ActiveRigs)
-            try
-            {
-                if (rig.OwningNetPlayer.IsLocal) continue;
-                var rigTransform = rig.transform.FindChildRecursive("head");
-                var distanceToTarget = Vector3.Distance(hand.position, rigTransform.position);
-
-                if (distanceToTarget < closestDistance)
-                {
-                    closestDistance = distanceToTarget;
-                    closestTransform = rigTransform;
-                    closestRig = rig;
-                }
-            }
-            catch (Exception e)
-            {
-                Logging.Exception(e);
-            }
-
-        return new RigScanResult
+        public struct RigScanResult
         {
-            transform = closestTransform,
-            distance = closestDistance,
-            rig = closestRig
-        };
-    }
+            public Transform transform;
+            public VRRig rig;
+            public float distance;
+        }
 
-    private bool GivingConsent(VRRig rig)
-    {
-        var np = rig.GetComponent<NetworkedPlayer>();
-        if (PlayerExtensions.IsPixel(PhotonNetwork.LocalPlayer)) return true;
-        return
-            (np.RightTriggerPressed &&
-             np.RightGripPressed &&
-             np.RightThumbAmount < .25f &&
-             Vector3.Dot(Vector3.up, rig.rightHandTransform.forward) > 0)
-            ||
-            (np.LeftTriggerPressed &&
-             np.LeftGripPressed &&
-             np.LeftThumbAmount < .25f &&
-             Vector3.Dot(Vector3.up, rig.leftHandTransform.forward) > 0)
-            ;
-    }
-
-    private bool RevokingConsent(VRRig rig)
-    {
-        var np = rig.GetComponent<NetworkedPlayer>();
-        if (PlayerExtensions.IsPixel(PhotonNetwork.LocalPlayer)) return false;
-        return
-            (np.RightTriggerPressed &&
-             np.RightGripPressed &&
-             np.RightThumbAmount < .25f &&
-             Vector3.Dot(Vector3.down, rig.rightHandTransform.forward) > 0)
-            ||
-            (np.LeftTriggerPressed &&
-             np.LeftGripPressed &&
-             np.LeftThumbAmount < .25f &&
-             Vector3.Dot(Vector3.down, rig.leftHandTransform.forward) > 0)
-            ;
-    }
-
-    private void EnableNoClip()
-    {
-        var noclip = Plugin.MenuController.GetComponent<NoClip>();
-        noclip.button.AddBlocker(ButtonController.Blocker.PIGGYBACKING);
-        noclip.enabled = true;
-    }
-
-    private void DisableNoClip()
-    {
-        var noclip = Plugin.MenuController.GetComponent<NoClip>();
-        noclip.button.RemoveBlocker(ButtonController.Blocker.PIGGYBACKING);
-        noclip.enabled = false;
-    }
-
-    private bool TryMount(bool isLeft)
-    {
-        var hand = isLeft ? GestureTracker.Instance.leftHand : GestureTracker.Instance.rightHand;
-        var closest = ClosestRig(hand.transform);
-        if (closest.distance < mountDistance && enabled && !mounted)
-            if (GivingConsent(closest.rig))
+        public RigScanResult ClosestRig(Transform hand)
+        {
+            VRRig closestRig = null;
+            Transform closestTransform = null;
+            float closestDistance = Mathf.Infinity;
+            foreach (var rig in VRRigCache.ActiveRigs)
             {
-                if (!PositionValidator.Instance.isValidAndStable)
+                try
                 {
-                    GorillaTagger.Instance.offlineVRRig.PlayHandTapLocal(68, false, 1f);
-                    return false;
+                    if (rig.Creator.IsLocal)
+                    {
+                        continue;
+                    }
+
+                    var rigTransform = rig.transform.FindChildRecursive("head");
+                    float distanceToTarget = Vector3.Distance(hand.position, rigTransform.position);
+
+                    if (distanceToTarget < closestDistance)
+                    {
+                        closestDistance = distanceToTarget;
+                        closestTransform = rigTransform;
+                        closestRig = rig;
+                    }
                 }
-
-                Mount(closest.rig.headConstraint, closest.rig);
-                return true;
+                catch (Exception e)
+                {
+                    Logging.Exception(e);
+                }
             }
+            return new RigScanResult()
+            {
+                transform = closestTransform,
+                distance = closestDistance,
+                rig = closestRig
+            };
+        }
 
-        return false;
-    }
+        bool GivingConsent(VRRig rig)
+        {
+            var np = rig.GetComponent<NetworkedPlayer>();
 
-    private void Latch(InputTracker input)
-    {
-        if (input.node == XRNode.LeftHand)
-            latchedWithLeft = TryMount(true);
-        else
-            latchedWithLeft = !TryMount(false);
-    }
+            return (np.RightTriggerPressed && np.RightGripPressed && np.RightThumbAmount < .25f && Vector3.Dot(Vector3.up, rig.rightHandTransform.forward) > 0) ||
+                   (np.LeftTriggerPressed && np.LeftGripPressed && np.LeftThumbAmount < .25f && Vector3.Dot(Vector3.up, rig.leftHandTransform.forward) > 0);
+        }
 
-    private void Unlatch(InputTracker input)
-    {
-        if (!enabled || !mounted) return;
-        if ((input.node == XRNode.LeftHand && latchedWithLeft) ||
-            (input.node == XRNode.RightHand && !latchedWithLeft))
-            Unmount();
-    }
+        bool RevokingConsent(VRRig rig)
+        {
+            var np = rig.GetComponent<NetworkedPlayer>();
 
-    protected override void Cleanup()
-    {
-        if (!MenuController.Instance.Built) return;
-        if (mounted)
-            Unmount();
-        if (GestureTracker.Instance is null) return;
-        GestureTracker.Instance.leftGrip.OnPressed -= Latch;
-        GestureTracker.Instance.leftGrip.OnReleased -= Unlatch;
-        GestureTracker.Instance.rightGrip.OnPressed -= Latch;
-        GestureTracker.Instance.rightGrip.OnReleased -= Unlatch;
-    }
+            return (np.RightTriggerPressed && np.RightGripPressed && np.RightThumbAmount < .25f && Vector3.Dot(Vector3.down, rig.rightHandTransform.forward) > 0) ||
+                   (np.LeftTriggerPressed && np.LeftGripPressed && np.LeftThumbAmount < .25f && Vector3.Dot(Vector3.down, rig.leftHandTransform.forward) > 0);
+        }
 
-    public override string GetDisplayName()
-    {
-        return DisplayName;
-    }
+        void EnableNoClip()
+        {
+            var noclip = Plugin.MenuController.GetComponent<NoClip>();
+            noclip.button.AddBlocker(ButtonController.Blocker.PIGGYBACKING);
+            noclip.enabled = true;
+        }
 
-    public override string Tutorial()
-    {
-        return "- To mount a player, ask them to give you a thumbs up.\n" +
-               "- Hold down [Grip] near their head to hop on.\n" +
-               "- If the player gives you a thumbs down you will be dismounted.";
-    }
+        void DisableNoClip()
+        {
+            var noclip = Plugin.MenuController.GetComponent<NoClip>();
+            noclip.button.RemoveBlocker(ButtonController.Blocker.PIGGYBACKING);
+            noclip.enabled = false;
+        }
 
-    public struct RigScanResult
-    {
-        public Transform transform;
-        public VRRig rig;
-        public float distance;
+        bool TryMount(bool isLeft)
+        {
+            var hand = isLeft ? GestureTracker.Instance.leftHand : GestureTracker.Instance.rightHand;
+            RigScanResult closest = ClosestRig(hand.transform);
+            if (closest.distance < mountDistance && enabled && !mounted)
+            {
+                if (GivingConsent(closest.rig))
+                {
+                    if (!PositionValidator.Instance.isValidAndStable)
+                    {
+                        GorillaTagger.Instance.offlineVRRig.PlayHandTapLocal(68, false, 1f);
+                        return false;
+                    }
+                    Mount(closest.transform, closest.rig);
+                    return true;
+                }
+            }
+            return false;
+        }
+
+        void Latch(InputTracker input)
+        {
+            if (input.node == XRNode.LeftHand)
+                latchedWithLeft = TryMount(true);
+            else
+                latchedWithLeft = !TryMount(false);
+        }
+
+        void Unlatch(InputTracker input)
+        {
+            if (!enabled || !mounted) return;
+            if (input.node == XRNode.LeftHand && latchedWithLeft ||
+                input.node == XRNode.RightHand && !latchedWithLeft)
+                Unmount();
+        }
+
+        protected override void OnEnable()
+        {
+            if (!MenuController.Instance.Built) return;
+            base.OnEnable();
+            GestureTracker.Instance.leftGrip.OnPressed += Latch;
+            GestureTracker.Instance.leftGrip.OnReleased += Unlatch;
+            GestureTracker.Instance.rightGrip.OnPressed += Latch;
+            GestureTracker.Instance.rightGrip.OnReleased += Unlatch;
+        }
+
+        protected override void Cleanup()
+        {
+            if (!MenuController.Instance.Built) return;
+            if (mounted)
+                Unmount();
+            if (GestureTracker.Instance is null) return;
+            GestureTracker.Instance.leftGrip.OnPressed -= Latch;
+            GestureTracker.Instance.leftGrip.OnReleased -= Unlatch;
+            GestureTracker.Instance.rightGrip.OnPressed -= Latch;
+            GestureTracker.Instance.rightGrip.OnReleased -= Unlatch;
+
+        }
+
+        public override string GetDisplayName()
+        {
+            return DisplayName;
+        }
+
+        public override string Tutorial()
+        {
+            return "To Mount a Player, ask them to give you a Thumbs Up.\n" +
+                   "[GRIP] their Head to Hop on.\n" +
+                   "If the Player gives you a Thumbs Down you will be Dismounted.";
+        }
     }
 }

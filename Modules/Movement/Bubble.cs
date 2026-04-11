@@ -1,16 +1,16 @@
 ﻿using System;
 using BepInEx.Configuration;
 using GorillaLocomotion;
-using Grate.Extensions;
-using Grate.Gestures;
-using Grate.GUI;
-using Grate.Networking;
-using Grate.Patches;
-using Grate.Tools;
+using Bark.Extensions;
+using Bark.Gestures;
+using Bark.GUI;
+using Bark.Networking;
+using Bark.Patches;
+using Bark.Tools;
 using UnityEngine;
 using NetworkPlayer = NetPlayer;
 
-namespace Grate.Modules.Movement;
+namespace Bark.Modules.Movement;
 
 public class BubbleMarker : MonoBehaviour
 {
@@ -21,7 +21,7 @@ public class BubbleMarker : MonoBehaviour
         bubble = Instantiate(Bubble.bubblePrefab);
         bubble.transform.SetParent(transform, false);
         bubble.transform.localPosition = new Vector3(0, -.1f, 0);
-        bubble.gameObject.layer = GrateInteractor.InteractionLayer;
+        bubble.gameObject.layer = BarkInteractor.InteractionLayer;
     }
 
     private void OnDestroy()
@@ -30,7 +30,7 @@ public class BubbleMarker : MonoBehaviour
     }
 }
 
-public class Bubble : GrateModule
+public class Bubble : BarkModule
 {
     public static readonly string DisplayName = "Bubble";
     public static GameObject bubblePrefab;
@@ -198,7 +198,7 @@ public class Bubble : GrateModule
 
     public override string Tutorial()
     {
-        return "Creates a bubble around you so you can float. " +
-               "Tap the side that you want to move towards to move.";
+        return "Creates a Bubble around you so you can Float.\n" +
+               "Tap the Bubble to Move.";
     }
 }

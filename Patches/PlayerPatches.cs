@@ -1,11 +1,11 @@
 ﻿using System;
 using GorillaLocomotion;
-using Grate.Modules.Physics;
-using Grate.Tools;
+using Bark.Modules.Physics;
+using Bark.Tools;
 using HarmonyLib;
 using UnityEngine;
 
-namespace Grate.Patches;
+namespace Bark.Patches;
 
 [HarmonyPatch(typeof(GTPlayer))]
 [HarmonyPatch(nameof(GTPlayer.LateUpdate), MethodType.Normal)]

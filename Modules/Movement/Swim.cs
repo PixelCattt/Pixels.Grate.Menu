@@ -1,10 +1,10 @@
 ﻿using GorillaLocomotion;
-using Grate.GUI;
+using Bark.GUI;
 using UnityEngine;
 
-namespace Grate.Modules;
+namespace Bark.Modules;
 
-public class Swim : GrateModule
+public class Swim : BarkModule
 {
     public static readonly string DisplayName = "Swim";
     public GameObject? waterVolume;
@@ -47,6 +47,6 @@ public class Swim : GrateModule
 
     public override string Tutorial()
     {
-        return "Effect: Surrounds you with invisible water.";
+        return "Surrounds you with invisible Water so you can Swim through the Air.";
     }
 }

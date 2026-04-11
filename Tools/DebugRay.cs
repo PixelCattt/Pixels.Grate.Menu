@@ -1,9 +1,9 @@
 ﻿using System;
 using System.Collections.Generic;
-using Grate.Extensions;
+using Bark.Extensions;
 using UnityEngine;
 
-namespace Grate.Tools;
+namespace Bark.Tools;
 
 public class DebugRay : MonoBehaviour
 {

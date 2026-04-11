@@ -1,4 +1,4 @@
-﻿namespace Grate.Patches;
+﻿namespace Bark.Patches;
 
 public static class DebugPatches
 {

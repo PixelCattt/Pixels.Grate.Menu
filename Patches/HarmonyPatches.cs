@@ -1,7 +1,7 @@
 ﻿using System.Reflection;
 using HarmonyLib;
 
-namespace Grate;
+namespace Bark;
 
 /// <summary>
 ///     This class handles applying harmony patches to the game.

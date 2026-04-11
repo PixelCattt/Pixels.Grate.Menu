@@ -3,17 +3,17 @@ using BepInEx.Configuration;
 using GorillaLocomotion;
 using GorillaLocomotion.Climbing;
 using GorillaLocomotion.Gameplay;
-using Grate.Extensions;
-using Grate.Gestures;
-using Grate.GUI;
-using Grate.Tools;
+using Bark.Extensions;
+using Bark.Gestures;
+using Bark.GUI;
+using Bark.Tools;
 using HarmonyLib;
 using UnityEngine;
 using UnityEngine.XR;
 
-namespace Grate.Modules.Movement;
+namespace Bark.Modules.Movement;
 
-public class Zipline : GrateModule
+public class Zipline : BarkModule
 {
     public static readonly string DisplayName = "Zipline";
     public static GameObject launcherPrefab, ziplinePrefab;
@@ -128,7 +128,6 @@ public class Zipline : GrateModule
         try
         {
             var zipline = Instantiate(ziplinePrefab);
-            // Figure out where the ends of the rope will be
             var endpoints = GetEndpoints(gunStartHook.transform.position, gunStartHook.transform.up);
             var start = endpoints[0];
             var end = endpoints[1];
@@ -371,7 +370,7 @@ public class Zipline : GrateModule
             DisplayName,
             "gravity multiplier",
             5,
-            "Gravity multiplier while on the zipline"
+            "Gravity multiplier while on the Zipline"
         );
     }
 
@@ -382,7 +381,9 @@ public class Zipline : GrateModule
 
     public override string Tutorial()
     {
-        var h = LauncherHand.Value.Substring(0, 1).ToUpper() + LauncherHand.Value.Substring(1);
-        return $"Hold [{h} Trigger] to summon the zipline cannon. Release [{h} Trigger] to fire a zipline.";
+        var h = LauncherHand.Value.ToUpper();
+        return $"[{h} TRIGGER] to grap the Zipline-Cannon.\n" +
+               $"Release [{h} TRIGGER] to Fire a Zipline.\n" +
+               $"Grip the Zipline to hold on to it.";
     }
 }

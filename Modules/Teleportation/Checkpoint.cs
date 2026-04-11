@@ -3,19 +3,19 @@ using System.Collections;
 using System.Collections.Generic;
 using BepInEx.Configuration;
 using GorillaLocomotion;
-using Grate.Extensions;
-using Grate.Gestures;
-using Grate.GUI;
-using Grate.Modules.Physics;
-using Grate.Patches;
-using Grate.Tools;
+using Bark.Extensions;
+using Bark.Gestures;
+using Bark.GUI;
+using Bark.Modules.Physics;
+using Bark.Patches;
+using Bark.Tools;
 using UnityEngine;
 using UnityEngine.XR;
 using Random = UnityEngine.Random;
 
-namespace Grate.Modules.Teleportation;
+namespace Bark.Modules.Teleportation;
 
-public class Checkpoint : GrateModule
+public class Checkpoint : BarkModule
 {
     public static readonly string DisplayName = "Checkpoint";
     public static Checkpoint Instance;
@@ -213,6 +213,7 @@ public class Checkpoint : GrateModule
 
     public override string Tutorial()
     {
-        return "Hold [Left Trigger] to spawn a checkpoint. Hold [Right Trigger] to return to it.";
+        return "[LEFT TRIGGER] to Spawn a Checkpoint.\n" +
+               "Hold [RIGHT TRIGGER] to Teleport to it.";
     }
 }

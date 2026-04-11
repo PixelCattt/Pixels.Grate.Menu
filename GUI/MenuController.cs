@@ -4,16 +4,16 @@ using System.Diagnostics;
 using System.Collections.Generic;
 using System.Linq;
 using BepInEx.Configuration;
-using Grate.Extensions;
-using Grate.Gestures;
-using Grate.Interaction;
-using Grate.Modules;
-using Grate.Modules.Misc;
-using Grate.Modules.Movement;
-using Grate.Modules.Multiplayer;
-using Grate.Modules.Physics;
-using Grate.Modules.Teleportation;
-using Grate.Tools;
+using Bark.Extensions;
+using Bark.Gestures;
+using Bark.Interaction;
+using Bark.Modules;
+using Bark.Modules.Misc;
+using Bark.Modules.Movement;
+using Bark.Modules.Multiplayer;
+using Bark.Modules.Physics;
+using Bark.Modules.Teleportation;
+using Bark.Tools;
 using Photon.Pun;
 using UnityEngine;
 using UnityEngine.InputSystem;
@@ -22,9 +22,9 @@ using UnityEngine.UI;
 using UnityEngine.XR;
 using Player = GorillaLocomotion.GTPlayer;
 
-namespace Grate.GUI;
+namespace Bark.GUI;
 
-public class MenuController : GrateGrabbable
+public class MenuController : BarkGrabbable
 {
     public static MenuController? Instance;
     private static InputTracker? _summonTracker;
@@ -35,6 +35,9 @@ public class MenuController : GrateGrabbable
 
     public static bool Debugger = true;
 
+    public static bool hasCheckedUpdates = false;
+    Version remoteVersion = null;
+
     public Vector3
         initialMenuOffset = new(0, .035f, .65f),
         btnDimensions = new(.3f, .05f, .05f);
@@ -42,12 +45,12 @@ public class MenuController : GrateGrabbable
     public Rigidbody? rigidbody;
     public List<Transform>? modPages;
     public List<ButtonController>? buttons;
-    public List<GrateModule> modules = [];
+    public List<BarkModule> modules = [];
     public GameObject? modPage, settingsPage;
     public Text? helpText;
 
     public Renderer? renderer;
-    public Material[]? grate, bark, hollopurp, monke, old;
+    public Material[]? bark, gray, metal, monke;
 
     private int debugButtons;
 
@@ -65,7 +68,7 @@ public class MenuController : GrateGrabbable
             throwOnDetach = true;
             gameObject.AddComponent<PositionValidator>();
             if (Plugin.ConfigFile != null) Plugin.ConfigFile.SettingChanged += SettingsChanged;
-            var tooAddmodules = new List<GrateModule>
+            var tooAddmodules = new List<BarkModule>
             {
                 // Locomotion
                 gameObject.AddComponent<Airplane>(),
@@ -111,7 +114,7 @@ public class MenuController : GrateGrabbable
             };
 
             // TRUSTED
-            var trustedModules = new List<GrateModule>
+            var trustedModules = new List<BarkModule>
             {
                 gameObject.AddComponent<ShadowWings>(),
                 gameObject.AddComponent<GiantHat>(),
@@ -124,7 +127,7 @@ public class MenuController : GrateGrabbable
             }
 
             // DEV
-            var devModules = new List<GrateModule>
+            var devModules = new List<BarkModule>
             {
                 gameObject.AddComponent<DeveloperPhone>(),
                 gameObject.AddComponent<WaterGun>()
@@ -136,7 +139,7 @@ public class MenuController : GrateGrabbable
             }
 
             // PIXEL
-            var pixelModules = new List<GrateModule>
+            var pixelModules = new List<BarkModule>
             {
                 gameObject.AddComponent<Cheese>()
             };
@@ -175,7 +178,7 @@ public class MenuController : GrateGrabbable
 
     private void FixedUpdate()
     {
-        if (GrateModule.LastEnabled && GrateModule.LastEnabled == Potions.Instance)
+        if (BarkModule.LastEnabled && BarkModule.LastEnabled == Potions.Instance)
             helpText.text = Potions.Instance.Tutorial();
     }
 
@@ -216,13 +219,6 @@ public class MenuController : GrateGrabbable
                 renderer = GetComponent<MeshRenderer>();
             if (Plugin.AssetBundle != null)
             {
-                if (grate == null)
-                {
-                    var zipline = Plugin.AssetBundle.LoadAsset<Material>("Zipline Rope Material");
-                    var metal = Plugin.AssetBundle.LoadAsset<Material>("Metal Material");
-                    if (zipline && metal) grate = [zipline, metal];
-                }
-
                 if (bark == null)
                 {
                     var outer = Plugin.AssetBundle.LoadAsset<Material>("m_Menu Outer");
@@ -230,20 +226,21 @@ public class MenuController : GrateGrabbable
                     if (outer && inner) bark = [outer, inner];
                 }
 
-                if (hollopurp == null)
+                if (metal == null)
                 {
-                    var sparkleMat = Plugin.AssetBundle.LoadAsset<Material>("m_TK Sparkles");
-                    if (sparkleMat) hollopurp = [sparkleMat, sparkleMat];
+                    var zipline = Plugin.AssetBundle.LoadAsset<Material>("Zipline Rope Material");
+                    var metalMaterial = Plugin.AssetBundle.LoadAsset<Material>("Metal Material");
+                    if (zipline && metalMaterial) metal = [zipline, metalMaterial];
                 }
 
-                if (monke == null || old == null)
+                if (monke == null || gray == null)
                 {
                     var baseMat = Plugin.AssetBundle.LoadAsset<Material>("Gorilla Material");
                     if (baseMat)
                     {
                         monke ??= [baseMat, baseMat];
 
-                        old ??=
+                        gray ??=
                         [
                             new Material(baseMat)
                             {
@@ -264,20 +261,16 @@ public class MenuController : GrateGrabbable
 
             switch (themeName)
             {
-                case "grate":
-                    if (grate != null) renderer.materials = grate;
-                    break;
-
                 case "bark":
                     renderer.materials = bark;
                     break;
 
-                case "holowpurple":
-                    renderer.materials = hollopurp;
+                case "gray":
+                    renderer.materials = gray;
                     break;
 
-                case "oldgrate":
-                    renderer.materials = old;
+                case "metal":
+                    if (metal != null) renderer.materials = metal;
                     break;
 
                 case "player" when VRRig.LocalRig.CurrentCosmeticSkin != null:
@@ -362,48 +355,107 @@ public class MenuController : GrateGrabbable
 
     private IEnumerator VerCheck()
     {
-        using (var request = UnityWebRequest.Get("https://api.github.com/repos/PixelCattt/Pixels.Grate.Menu/releases/latest"))
+        Transform versionCanvas = null;
+        float timeout = 5f;
+        float timer = 0f;
+
+        while (versionCanvas == null && timer < timeout)
+        {
+            versionCanvas = transform.Find("Version Canvas");
+            timer += Time.deltaTime;
+            yield return null;
+        }
+
+        if (versionCanvas == null)
+        {
+            Logging.Warning("Cannot Display Version Number: Version Canvas not Found.");
+            yield break;
+        }
+
+        var text = versionCanvas.GetComponentInChildren<Text>();
+
+        if (text == null)
+        {
+            Logging.Warning("Cannot Display Version Number: Version Canvas has no Text Component.");
+            yield break;
+        }
+
+        text.text = $"{PluginInfo.Name} {PluginInfo.Version}";
+
+        Version localVersion;
+        if (!Version.TryParse(PluginInfo.Version, out localVersion))
+        {
+            Logging.Warning("[UPDATE CHECKER] Invalid Local Version Format.");
+            yield break;
+        }
+
+        if (hasCheckedUpdates)
+        {
+            if (remoteVersion != null)
+            {
+                if (remoteVersion > localVersion)
+                {
+                    text.horizontalOverflow = HorizontalWrapMode.Overflow;
+                    text.verticalOverflow = VerticalWrapMode.Overflow;
+                    text.text = "!!! Update Needed !!!";
+                }
+            }
+
+            yield break;
+        }
+
+        using (var request = UnityWebRequest.Get("https://api.github.com/repos/PixelCattt/Pixel-Bark/releases/latest"))
         {
             request.SetRequestHeader("Accept", "application/json");
 
             yield return request.SendWebRequest();
 
             if (request.result != UnityWebRequest.Result.Success)
+            {
+                Logging.Warning("[UPDATE CHECKER] Error: " + request.error);
                 yield break;
+            }
 
             var json = request.downloadHandler.text;
-
-            const string key = "\"tag_name\":\"";
+            const string key = "\"tag_name\": \"";
             var start = json.IndexOf(key, StringComparison.Ordinal);
-            if (start == -1) yield break;
+
+            if (start == -1)
+            {
+                Logging.Warning("[UPDATE CHECKER] tag_name not found in Response.");
+                yield break;
+            }
 
             start += key.Length;
-
             var end = json.IndexOf("\"", start, StringComparison.Ordinal);
-            if (end == -1) yield break;
+
+            if (end == -1)
+            {
+                Logging.Warning("[UPDATE CHECKER] Invalid JSON Formatting.");
+                yield break;
+            }
 
             var tag = json.Substring(start, end - start);
 
             if (tag.StartsWith("v"))
                 tag = tag.Substring(1);
 
-            var checkedV = new Version(tag);
-            var localv = new Version(PluginInfo.Version);
+            if (!Version.TryParse(tag, out remoteVersion))
+            {
+                Logging.Warning("[UPDATE CHECKER] Invalid Remote Version Format.");
+                yield break;
+            }
 
-            var text = gameObject.transform.Find("Version Canvas").GetComponentInChildren<Text>();
-
-            if (checkedV > localv)
+            if (remoteVersion > localVersion)
             {
                 text.horizontalOverflow = HorizontalWrapMode.Overflow;
                 text.verticalOverflow = VerticalWrapMode.Overflow;
                 text.text = "!!! Update Needed !!!";
 
-                Process.Start("https://github.com/PixelCattt/Pixels.Grate.Menu/releases");
+                Process.Start("https://github.com/PixelCattt/Pixel-Bark/releases");
             }
-            else
-            {
-                text.text = $"{PluginInfo.Name} {PluginInfo.Version}";
-            }
+
+            hasCheckedUpdates = true;
         }
     }
 
@@ -415,7 +467,7 @@ public class MenuController : GrateGrabbable
             helpText = gameObject.transform.Find("Help Canvas").GetComponentInChildren<Text>();
             helpText.transform.parent.localPosition = new Vector3(0, -0.0731f, -0.1f);
             helpText.transform.parent.localRotation = Quaternion.Euler(0, 180f, 0);
-            helpText.text = "Enable a module to see its tutorial.";
+            helpText.text = "Click a Module to see its Tutorial.";
             var collider = gameObject.GetOrAddComponent<BoxCollider>();
             collider.isTrigger = true;
             rigidbody = gameObject.GetComponent<Rigidbody>();
@@ -462,7 +514,7 @@ public class MenuController : GrateGrabbable
     public void SetupModPages()
     {
         var modPageTemplate = gameObject.transform.Find("Mod Page");
-        var buttonsPerPage = modPageTemplate.childCount - 2; // Excludes the prev/next page btns
+        var buttonsPerPage = modPageTemplate.childCount - 2; // Excludes the Page Switching Buttons
         var numPages = (modules.Count - 1) / buttonsPerPage + 1;
         if (Plugin.DebugMode)
             numPages++;
@@ -486,7 +538,8 @@ public class MenuController : GrateGrabbable
                 module.enabled = pressed;
                 if (pressed)
                     helpText.text = module.GetDisplayName().ToUpper() +
-                                    "\n\n" + module.Tutorial().ToUpper();
+                                    "\n\n" +
+                                    module.Tutorial().ToUpper();
             };
             module.button = btnController;
             btnController.SetText(module.GetDisplayName().ToUpper());
@@ -638,12 +691,12 @@ public class MenuController : GrateGrabbable
             );
 
             var ThemeDesc = new ConfigDescription(
-                "Which Theme Should Grate Use?",
-                new AcceptableValueList<string>("grate", "OldGrate", "bark", "holowpurple", "Player")
+                "Which Theme Should Bark Use?",
+                new AcceptableValueList<string>("bark", "gray", "metal", "player")
             );
             _theme = Plugin.ConfigFile.Bind("General",
                 "theme",
-                "Grate",
+                "bark",
                 ThemeDesc
             );
         }

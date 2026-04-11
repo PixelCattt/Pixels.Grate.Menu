@@ -2,17 +2,17 @@
 using System.Collections;
 using BepInEx.Configuration;
 using GorillaLocomotion;
-using Grate.Extensions;
-using Grate.Gestures;
-using Grate.GUI;
-using Grate.Patches;
-using Grate.Tools;
+using Bark.Extensions;
+using Bark.Gestures;
+using Bark.GUI;
+using Bark.Patches;
+using Bark.Tools;
 using UnityEngine;
 using Random = UnityEngine.Random;
 
-namespace Grate.Modules;
+namespace Bark.Modules;
 
-public class Teleport : GrateModule
+public class Teleport : BarkModule
 {
     public static readonly string DisplayName = "Teleport";
     public static readonly int layerMask = LayerMask.GetMask("Default", "Gorilla Object");
@@ -160,7 +160,7 @@ public class Teleport : GrateModule
             DisplayName,
             "charge time",
             5,
-            "How long it takes to charge the teleport"
+            "How long it takes to charge the Teleport"
         );
     }
 
@@ -172,7 +172,8 @@ public class Teleport : GrateModule
     public override string Tutorial()
     {
         return
-            "To teleport, make a triangle with your thumbs and index fingers and" +
-            "look at where you want to teleport.";
+            "Make a Triangle with your Thumbs and index Fingers.\n" +
+            "Look through it to where you want to Teleport.\n" +
+            "Stay Still for a few Seconds to Teleport.";
     }
 }

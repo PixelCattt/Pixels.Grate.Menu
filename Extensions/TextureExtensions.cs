@@ -1,6 +1,6 @@
 ﻿using UnityEngine;
 
-namespace Grate.Extensions;
+namespace Bark.Extensions;
 
 public static class TextureExtensions
 {

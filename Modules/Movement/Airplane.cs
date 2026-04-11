@@ -1,13 +1,13 @@
 ﻿using BepInEx.Configuration;
 using GorillaLocomotion;
-using Grate.Gestures;
-using Grate.GUI;
-using Grate.Tools;
+using Bark.Gestures;
+using Bark.GUI;
+using Bark.Tools;
 using UnityEngine;
 
-namespace Grate.Modules.Movement;
+namespace Bark.Modules.Movement;
 
-public class Airplane : GrateModule
+public class Airplane : BarkModule
 {
     public static readonly string DisplayName = "Airplane";
 
@@ -86,8 +86,9 @@ public class Airplane : GrateModule
 
     public override string Tutorial()
     {
-        return "- To fly, do a T-pose (spread your arms out like wings on a plane). \n" +
-               "- To fly up, point your thumbs up. \n" +
-               "- To fly down, point your thumbs down.";
+        string inputTutorial = SteerWith.Value == "head" ? "To go up or down, look there with your Head." : "To go up or down, point there with your Thumbs.";
+
+        return "To Fly, do a T-Pose.\n" +
+               inputTutorial;
     }
 }

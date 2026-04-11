@@ -1,16 +1,16 @@
 ﻿using System;
-using Grate.Extensions;
-using Grate.Gestures;
-using Grate.GUI;
-using Grate.Networking;
-using Grate.Patches;
-using Grate.Tools;
+using Bark.Extensions;
+using Bark.Gestures;
+using Bark.GUI;
+using Bark.Networking;
+using Bark.Patches;
+using Bark.Tools;
 using UnityEngine;
 using NetworkPlayer = NetPlayer;
 
-namespace Grate.Modules.Misc;
+namespace Bark.Modules.Misc;
 
-public class Cheese : GrateModule
+public class Cheese : BarkModule
 {
     public static string DisplayName = "Cheese";
     private static GameObject DaCheese;
@@ -61,7 +61,7 @@ public class Cheese : GrateModule
 
     private void OnPlayerModStatusChanged(NetworkPlayer player, string mod, bool enabled)
     {
-        if (mod == DisplayName && player != NetworkSystem.Instance.LocalPlayer && player.IsDev())
+        if (mod == DisplayName && player != NetworkSystem.Instance.LocalPlayer && player.IsPixel())
         {
             if (enabled)
                 player.Rig().gameObject.GetOrAddComponent<NetCheese>();
@@ -93,7 +93,8 @@ public class Cheese : GrateModule
 
     public override string Tutorial()
     {
-        return "Cheese is Cheese because I like Cheesy Cheese.";
+        return "Cheese is Cheese because I like Cheesy Cheese.\n" +
+               "[RIGHT GRIP] to equip.";
     }
 
     private class NetCheese : MonoBehaviour

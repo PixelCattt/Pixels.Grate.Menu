@@ -1,13 +1,13 @@
 ﻿using System.Collections.Generic;
 using System.Linq;
 using GorillaLocomotion;
-using Grate.Modules;
-using Grate.Tools;
+using Bark.Modules;
+using Bark.Tools;
 using HarmonyLib;
 using Photon.Pun;
 using UnityEngine;
 
-namespace Grate.Extensions;
+namespace Bark.Extensions;
 
 public static class PlayerExtensions
 {
@@ -81,9 +81,9 @@ public static class PlayerExtensions
 
     public static bool ModuleEnabled(this NetPlayer player, string mod)
     {
-        if (!player.HasProperty(GrateModule.enabledModulesKey)) return false;
+        if (!player.HasProperty(BarkModule.enabledModulesKey)) return false;
 
-        var enabledMods = player.GetProperty<Dictionary<string, bool>>(GrateModule.enabledModulesKey);
+        var enabledMods = player.GetProperty<Dictionary<string, bool>>(BarkModule.enabledModulesKey);
         return enabledMods.TryGetValue(mod, out var enabled) && enabled;
     }
 

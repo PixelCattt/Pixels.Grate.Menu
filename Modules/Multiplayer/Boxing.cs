@@ -2,17 +2,17 @@
 using System.Collections;
 using System.Collections.Generic;
 using BepInEx.Configuration;
-using Grate.Extensions;
-using Grate.Gestures;
-using Grate.GUI;
-using Grate.Networking;
-using Grate.Tools;
+using Bark.Extensions;
+using Bark.Gestures;
+using Bark.GUI;
+using Bark.Networking;
+using Bark.Tools;
 using UnityEngine;
 using NetworkPlayer = NetPlayer;
 using Player = GorillaLocomotion.GTPlayer;
 using Random = UnityEngine.Random;
 
-namespace Grate.Modules.Multiplayer;
+namespace Bark.Modules.Multiplayer;
 
 public class BoxingGlove : MonoBehaviour
 {
@@ -28,7 +28,7 @@ public class BoxingGlove : MonoBehaviour
     }
 }
 
-public class Boxing : GrateModule
+public class Boxing : BarkModule
 {
     public static readonly string DisplayName = "Boxing";
 
@@ -54,9 +54,9 @@ public class Boxing : GrateModule
         {
             ReloadConfiguration();
             var capsule = GameObject.CreatePrimitive(PrimitiveType.Capsule);
-            capsule.name = "GratePunchDetector";
+            capsule.name = "BarkPunchDetector";
             capsule.transform.SetParent(Player.Instance.bodyCollider.transform, false);
-            capsule.layer = GrateInteractor.InteractionLayer;
+            capsule.layer = BarkInteractor.InteractionLayer;
             capsule.GetComponent<MeshRenderer>().enabled = false;
 
             punchCollider = capsule.GetComponent<Collider>();
@@ -144,9 +144,9 @@ public class Boxing : GrateModule
         glove.transform.SetParent(parent, false);
         float x = isLeft ? 1 : -1;
         glove.transform.localScale = new Vector3(x, 1, 1);
-        glove.layer = GrateInteractor.InteractionLayer;
+        glove.layer = BarkInteractor.InteractionLayer;
         foreach (Transform child in glove.transform)
-            child.gameObject.layer = GrateInteractor.InteractionLayer;
+            child.gameObject.layer = BarkInteractor.InteractionLayer;
         return glove.AddComponent<BoxingGlove>();
     }
 
@@ -202,6 +202,6 @@ public class Boxing : GrateModule
 
     public override string Tutorial()
     {
-        return "Effect: Other players can punch you around.";
+        return "Other Players can Punch you around with Boxing Gloves.";
     }
 }

@@ -1,4 +1,4 @@
-﻿namespace Grate.Tools;
+﻿namespace Bark.Tools;
 
 public static class Sounds
 {
@@ -7,7 +7,7 @@ public static class Sounds
         None = 0,
         pillowhandtap = 3,
         grassrockhandtap = 7,
-        Gratehandtap = 8,
+        Barkhandtap = 8,
         woodhandtap = 9,
         dirthandtap = 14,
         metalhandtap = 18,
@@ -100,7 +100,7 @@ public static class Sounds
         CoyoteHowl_Quiet2 = 195,
         DivingBoardBounce = 196,
         SandTap = 197,
-        PalmTreeGrate = 198,
+        PalmTreeBark = 198,
         SharkSqueeze = 200,
         SharkRelease = 201,
         TentBounce = 202
